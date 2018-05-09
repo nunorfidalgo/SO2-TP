@@ -1,0 +1,33 @@
+* Criar um projecto vazio
+
+* Projecto: "Properties -> Configuration: All Configurations" e "Platform: All Platforms" mudar:
+	* "Configuration Properties->General":
+	* Character Set: Use Unicode Character Set
+	* em "Configuration Properties -> C/C++ -> Preprocessor" adicionar:
+		WIN32
+		_DEBUG
+		_CONSOLE
+			
+	* na DLL adicionar
+		_WINDOWS
+		_USRDLL
+
+* "Configuration Properties -> Linker -> Input -> Addicional Dependencies" adicionar:
+	* x86:
+		* "Properties -> Configuration: All Configurations" mudar para: Debug e adicionar:
+			$(SolutionDir)Debug\bridge.lib
+		* "Properties -> Configuration: All Configurations" mudar para: Release e adicionar:
+			$(SolutionDir)Release\bridge.lib
+	* x64:
+		* "Properties -> Configuration: All Configurations" mudar para: Debug e adicionar:
+			$(SolutionDir)x64\Debug\bridge.lib
+		* "Properties -> Configuration: All Configurations" mudar para: Release e adicionar:
+			$(SolutionDir)x64\Release\bridge.lib
+
+x86
+$(SolutionDir)Debug\bridge.lib
+$(SolutionDir)Release\bridge.lib
+
+x64
+$(SolutionDir)x64\Debug\bridge.lib
+$(SolutionDir)x64\Release\bridge.lib
