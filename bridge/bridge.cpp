@@ -1,4 +1,3 @@
-#include <windows.h>
 #include "bridge.h" //DLL.h"
 
 #define TAM 80
@@ -22,8 +21,6 @@
 //	int y;
 //} POWERUPS;
 
-extern "C" // usar em C ou C++
-{
 	int Teste(void) {
 		_tprintf(TEXT("\nbridge: texto de teste..."));
 		return 0;
@@ -38,7 +35,7 @@ extern "C" // usar em C ou C++
 		HANDLE	hEvent;
 		TCHAR *cmd;
 	
-		HANDLE hFile, hMap;
+		HANDLE hMap; // hFile
 	
 		// Abrir ficheiro... (RW)
 		//hFile = CreateFile(TEXT("memdados.txt"), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -111,18 +108,17 @@ extern "C" // usar em C ou C++
 		_tprintf(TEXT("\nEmpregado: fim"));
 		return 0;
 	}
-}
 
-BOOL WINAPI DllMain(HANDLE hInstance, DWORD razao, LPVOID tipo_declaracao) {
-	switch (razao) {
+extern "C" BRIDGE_API BOOL APIENTRY WINAPI DllMain(HANDLE hInstance, DWORD fdwReason, LPVOID lpvReserved) {
+	switch (fdwReason) {
 	case DLL_PROCESS_ATTACH:
-		if (tipo_declaracao == NULL)
+		if (lpvReserved == NULL)
 			_tprintf(TEXT("\nBridge: Ocorreu um erro ao iniciar a DLL!"));
 		else
 			_tprintf(TEXT("Bridge: pronta..."));
 		break;
 	case DLL_PROCESS_DETACH:
-		if (tipo_declaracao == NULL)
+		if (lpvReserved == NULL)
 			_tprintf(TEXT("\nBridge: Ocorreu um erro a terminar a DLL!"));
 		else
 			_tprintf(TEXT("Brige: terminou..."));
