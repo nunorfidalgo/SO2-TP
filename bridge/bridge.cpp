@@ -38,7 +38,7 @@ int patrao() {
 		_tprintf(TEXT("CMD: "));
 		_fgetts(cmd, TAM, stdin);
 		cmd[_tcslen(cmd) - 1] = TEXT('\0');
-		_tprintf(TEXT("Escrevi %d bytes: '%s'\n"), (_tcslen(cmd) + 1), cmd);
+		_tprintf(TEXT("Escrevi %d bytes: '%s'\n"), (int)(_tcslen(cmd) + 1), cmd);
 		SetEvent(hEvent);
 		ResetEvent(hEvent);
 	} while (_tcsncmp(cmd, TEXT("fim"), 3) != 0);
@@ -75,7 +75,7 @@ int empregado() {
 	}
 	do {
 		WaitForSingleObject(hEvent, INFINITE);
-		_tprintf(TEXT("Li '%s' (%d bytes)\n"), cmd, _tcslen(cmd) + 1);
+		_tprintf(TEXT("Li '%s' (%d bytes)\n"), cmd,(int) _tcslen(cmd) + 1);
 	
 	} while (_tcsncmp(cmd, TEXT("fim"), 3) != 0);
 	
