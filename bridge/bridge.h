@@ -3,6 +3,27 @@
 #include <windows.h>
 #include <tchar.h>
 
+#define TAM 80
+
+// Estrutura de dados
+typedef struct {
+	int tamanho;
+	int x;
+	int y;
+} NAVES;
+
+typedef struct {
+	int tamanho;
+	int x;
+	int y;
+} TIROS;
+
+typedef struct {
+	int tamanho;
+	int x;
+	int y;
+} POWERUPS;
+
 #ifdef BRIDGE_EXPORTS
 #define BRIDGE_API __declspec(dllexport)
 #else

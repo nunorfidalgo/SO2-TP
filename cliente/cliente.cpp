@@ -1,9 +1,3 @@
-#include <windows.h>
-#include <tchar.h>
-#include <io.h>
-#include <fcntl.h>
-#include <stdio.h>
-
 #include "cliente.h"
 
 int _tmain(int argc, TCHAR *argv[]) {
