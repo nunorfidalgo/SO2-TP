@@ -11,12 +11,11 @@ int _tmain(int argc, TCHAR *argv[]) {
 	_tprintf(TEXT("\nGateway: pronto..."));
 
 	//Chamar a funcao da Dll
-	Teste();
-	_tprintf(TEXT("\nBridge: Valor: %d"), UmValor(120));
+	//Teste();
+	//_tprintf(TEXT("\nBridge: Valor: %d"), UmValor(120));
 
-	
-	_tprintf(TEXT("\nBridge: A executar empregado..."));
-	empregado();
+	//_tprintf(TEXT("\nBridge: A executar empregado..."));
+	//empregado();
 
 	_tprintf(TEXT("\nGateway: terminou...\n"));
 	return 0;
