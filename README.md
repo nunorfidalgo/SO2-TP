@@ -2,7 +2,7 @@
 
 ## Trabalho Prático de Sistema Operativos 2 2017/2018 - ISEC
 * Desenvolvido em Visual Studio 2017 Community Edition;
-* Código em PT-PT
+* Comentários e código em PT-PT;
 
 ## Breve descrição:
 Implementação de um jogo estilo Phoniex, Galaxians ou Invaders com suporte a vários utilizadores devido ao uso de um servidor(GUI), 
@@ -22,6 +22,9 @@ O jogo terá naves invasores e defensoras, tiros, bombas e powerups, assim como 
 - [x] Definir tarefas iniciais;
 - [x] Colocar as opções Debug/Release, x86/x64 a funcionar;
 	- [x] Correções nos projectos
+
+# Entregas
+- [ ] Entrega meta1 em modo release em x86 e x64
 - [ ] Entrega final em modo release em x86 e x64
 
 # Modulos
@@ -29,12 +32,13 @@ O jogo terá naves invasores e defensoras, tiros, bombas e powerups, assim como 
 # Servidor
 - [x] Código inicial da servidor(GUI):
 	- [x] DLL implicita
-	- [ ] Estrutura de dados;
-	- [ ] Algoritmos de jogo;
+	- [ ] Estrutura de dados; -> Em progresso!!
+	- [x] iniciar as naves;
     - [ ] Threads por cada tipo de invasor(ou por cada nave invasora);
     - [ ] Thread para os tiros dos defensores, bombas dos invasores e powerups;
 	- [ ] Thread para gerir a temporização e efeitos dos powerups;
 	- [ ] Thread para gerir os jogadores;
+	- [ ] Algoritmos de jogo;
 
 # Cliente
 - [x] Código inicial da cliente(GUI):
@@ -53,6 +57,7 @@ O jogo terá naves invasores e defensoras, tiros, bombas e powerups, assim como 
 # Bridge
 - [ ] Código inicial da bridge(DDL):
 	- [x] Livraria DLL;
+	- [ ] Zonas de memoria partilhada;
     - [ ] Zona de mensagens;
     - [ ] Zona de dados do jogo;
 

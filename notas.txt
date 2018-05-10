@@ -23,11 +23,21 @@
 			$(SolutionDir)x64\Debug\bridge.lib
 		* "Properties -> Configuration: All Configurations" mudar para: Release e adicionar:
 			$(SolutionDir)x64\Release\bridge.lib
-
-x86
+-----------------------------------------------------------------------------------------------------------------------
+# x86
 $(SolutionDir)Debug\bridge.lib
 $(SolutionDir)Release\bridge.lib
-
-x64
+# x64
 $(SolutionDir)x64\Debug\bridge.lib
 $(SolutionDir)x64\Release\bridge.lib
+-----------------------------------------------------------------------------------------------------------------------
+
+# Colocar no relateorio
+* configurações do projecto
+* Mudar os projet dependencys
+* estruturas de dados
+
+# Dúvidas
+* usar malloc's para criar os arrays de dados?
+* é necessário implementar os algortimos de jogo?
+* como testar a logica se esta a funcionar bem com as threads, mutex, semaforos, etc?

@@ -13,10 +13,16 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bridge", "bridge\bridge.vcxproj", "{D0496E07-1EA8-4F7F-8246-0ED1C6E2C336}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gateway", "gateway\gateway.vcxproj", "{AE762504-12E9-4CAB-A8F7-C0085A1EC1A5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D0496E07-1EA8-4F7F-8246-0ED1C6E2C336} = {D0496E07-1EA8-4F7F-8246-0ED1C6E2C336}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cliente", "cliente\cliente.vcxproj", "{2E9484E0-D1C3-4980-B79D-A93535CB5827}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "servidor", "servidor\servidor.vcxproj", "{5C791F74-E974-4A6B-B91F-FD09212E18DE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D0496E07-1EA8-4F7F-8246-0ED1C6E2C336} = {D0496E07-1EA8-4F7F-8246-0ED1C6E2C336}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
