@@ -41,3 +41,6 @@ $(SolutionDir)x64\Release\bridge.lib
 * usar malloc's para criar os arrays de dados?
 * é necessário implementar os algortimos de jogo?
 * como testar a logica se esta a funcionar bem com as threads, mutex, semaforos, etc?
+
+* Ideias a implementar extra
+* Nave gigante a cada 3 niveis com maior resistencia, maior dimensao, maior numero de tiros
