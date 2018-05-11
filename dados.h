@@ -16,6 +16,14 @@
 #define NUM_TIROS 10
 #define NUM_POWERUP 2
 
+
+#define TAM 80 // isto é para retirar
+
+typedef struct {
+	int nave_defensora[NUM_NAV_DEFENSORAS];
+	char texto[TAM];
+} Mensagem;
+
 // Estrutura de dados
 typedef struct {
 	unsigned int	x;
