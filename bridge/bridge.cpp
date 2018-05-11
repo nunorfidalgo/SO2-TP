@@ -8,7 +8,7 @@ int BRIDGE_API Teste(void) {
 int BRIDGE_API UmValor(int v) {
 	return v;
 }
-	
+
 void BRIDGE_API gotoxy(int x, int y) {
 	static HANDLE hStdout = NULL;
 	COORD coord;
@@ -23,14 +23,14 @@ int BRIDGE_API patrao() {
 	_tprintf(TEXT("\nPatrao:"));
 	HANDLE	hEvent;
 	TCHAR *cmd;
-	
+
 	HANDLE hMap; // hFile
-	
+
 	LARGE_INTEGER t;
 	t.QuadPart = TAM * sizeof(TCHAR);
 	hMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, t.HighPart, t.LowPart, TEXT("shm"));
 	cmd = (TCHAR *)MapViewOfFile(hMap, FILE_MAP_WRITE, 0, 0, (SIZE_T)t.QuadPart);
-	
+
 	// Event
 	hEvent = CreateEvent(NULL, true, false, TEXT("evento"));
 	if (hEvent == NULL) {
@@ -45,27 +45,27 @@ int BRIDGE_API patrao() {
 		SetEvent(hEvent);
 		ResetEvent(hEvent);
 	} while (_tcsncmp(cmd, TEXT("fim"), 3) != 0);
-	
+
 	CloseHandle(hEvent);
 	UnmapViewOfFile(cmd);
 	CloseHandle(hMap);
-	
+
 	_tprintf(TEXT("\nPatrao: fim"));
 	return 0;
 }
-	
+
 int BRIDGE_API empregado() {
 	_tprintf(TEXT("\nEmpregado: "));
 	HANDLE	hEvent;
 	TCHAR *cmd;
-	
+
 	HANDLE hMap;
-	
+
 	LARGE_INTEGER t;
 	t.QuadPart = TAM * sizeof(TCHAR);
 	hMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READONLY, t.HighPart, t.LowPart, TEXT("shm"));
 	cmd = (TCHAR *)MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, (SIZE_T)t.QuadPart);
-	
+
 	// Event
 	hEvent = OpenEvent(SYNCHRONIZE, true, TEXT("evento"));
 	if (hEvent == NULL) {
@@ -74,10 +74,10 @@ int BRIDGE_API empregado() {
 	}
 	do {
 		WaitForSingleObject(hEvent, INFINITE);
-		_tprintf(TEXT("Li '%s' (%d bytes)\n"), cmd,(int) _tcslen(cmd) + 1);
-	
+		_tprintf(TEXT("Li '%s' (%d bytes)\n"), cmd, (int)_tcslen(cmd) + 1);
+
 	} while (_tcsncmp(cmd, TEXT("fim"), 3) != 0);
-	
+
 	CloseHandle(hEvent);
 	UnmapViewOfFile(cmd);
 	CloseHandle(hMap);

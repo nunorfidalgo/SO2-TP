@@ -8,37 +8,51 @@
 #include "../bridge/bridge.h"
 
 
+// tamanho padrão da linha de comandos do windows, mais tarde mudar para algo maior, como 500x500 ou 1000x1000
+#define COLUNAS 80
+#define LINHAS 25
+
+#define NUM_CLIENTES 2
 #define NUM_INVASORAS 6
 #define NUM_DEFENSORAS 2
 #define NUM_POWERUP 2
 
 // Estrutura de dados
 typedef struct {
-	unsigned int tamanho = 0;
-	int tipo = 0; // definir tipos de powerups, 0-> nenhum
-	bool em_uso = 0; // 0->disponivel, 1-> em_uso
-	unsigned int x = 0;
-	unsigned int y = 0;
-} POWERUP;
-
-typedef struct {
-	unsigned int tamanho = 0; // ?
-	bool tipo; // 0->tiro, 1->bomba
-	unsigned int x = 0;
-	unsigned int y = 0;
-} ATAQUE;
+	unsigned int x;
+	unsigned int y;
+} POS;
 
 typedef struct {
 	unsigned int tamanho;
-	//bool tipo; // 0->invasor, 1->defensor
-	unsigned int x;
-	unsigned int y;
-	bool powerup;
-	char powerupType;
-} NAVE;
+	int tipo[10]; // definir tipos de powerups, 0-> nenhum
+	POS coord;
+} POWERUP;
 
-// Vectores dinamicos para uso no servidor
-NAVE		*naves_invasoras;
-NAVE		*naves_defensoras;
-ATAQUE		*ataques;
-POWERUP		*powerups;
+typedef struct {
+	POS coord;
+} TIROS;
+
+typedef struct {
+	POS coord;
+} BOMBA;
+
+typedef struct {
+	unsigned int tamanho;
+	POS coord;
+	POWERUP powerup;
+} NAVE_INVASORAS;
+
+typedef struct {
+	unsigned int tamanho;
+	POS coord;
+	POWERUP powerup;
+} NAVE_DEFENSORAS; // clientes
+
+typedef struct {
+	NAVE_INVASORAS	naves_invasoras;
+	NAVE_DEFENSORAS	naves_defensoras; // clientes
+	BOMBA			bombas;
+	TIROS			tiros;
+	POWERUP			powerups;
+} JOGO;

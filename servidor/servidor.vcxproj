@@ -130,7 +130,7 @@
     <ClInclude Include="servidor.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="servidor.cpp" />
+    <ClCompile Include="servidor.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
