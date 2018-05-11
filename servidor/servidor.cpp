@@ -1,33 +1,42 @@
 #include "servidor.h"
 
-// Variaveis globais
-Jogo			*jogo;
-//HANDLE		hEvJogo;
-
-HANDLE			hMapMemParJogo;
-LARGE_INTEGER	tam_jogo;
-
-HANDLE			muNavInvs, muNavDefs, muTiros, muBombas, muPowerUps;
-HANDLE			htNavInvs, htNavDefs, htTiros, htBombas, htPowerUps;
-DWORD			idNavInvs, idNavDefs, idTiros, idBombas, idPowerUps;
-
-//Mensagem		mensagens;
-
 int _tmain(int argc, TCHAR *argv[]) {
 #ifdef UNICODE
 	_setmode(_fileno(stdin), _O_WTEXT);
 	_setmode(_fileno(stdout), _O_WTEXT);
 #endif
 
+	// Variaveis
+	Jogo			*jogo;
+	//HANDLE		hEvJogo;
+
+	HANDLE			hMapMemParJogo;
+	LARGE_INTEGER	tam_jogo;
+
+	HANDLE			muNavInvs, muNavDefs, muBatalha, muEfeitos, muJogadores;
+	HANDLE			htNavInvs, htNavDefs, htBatalha, htEfeitos, htJogadores;
+	DWORD			idNavInvs, idNavDefs, idBatalha, idEfeitos, idJogadores;
+
 	system("cls");
 
-	tam_jogo.QuadPart = sizeof(Jogo);
+	/*tam_jogo.QuadPart = sizeof(Jogo);
 	hMapMemParJogo = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_jogo.HighPart, tam_jogo.LowPart, TEXT("Jogo"));
 	if (hMapMemParJogo == NULL) {
-		_tprintf(TEXT("\nERRO memoria partilhada: %d"), GetLastError());
+		_tprintf(TEXT("ERRO ao criar memoria partilhada para o Jogo: %d\n"), GetLastError());
 		exit(1);
 	}
-	jogo = (Jogo *)MapViewOfFile(hMapMemParJogo, FILE_MAP_WRITE, 0, 0, (SIZE_T)tam_jogo.QuadPart);
+	jogo = (Jogo *)MapViewOfFile(hMapMemParJogo, FILE_MAP_WRITE, 0, 0, (SIZE_T)tam_jogo.QuadPart);*/
+
+	jogo = CriaMemoriaPartilhadaJogo(hMapMemParJogo, tam_jogo);
+
+	inicia_jogo(jogo);
+	mostra_naves_invasoras(jogo->naves_invasoras);
+	mostra_naves_defensoras(jogo->naves_defensoras);
+	mostra_bombas(jogo->bombas);
+	mostra_tiros(jogo->tiros);
+	mostra_powerups(jogo->powerups);
+
+	_tprintf(TEXT("\n"));
 
 	//// Event
 	//hEvJogo = CreateEvent(NULL, true, false, TEXT("Evento"));
@@ -36,14 +45,13 @@ int _tmain(int argc, TCHAR *argv[]) {
 	//	exit(1);
 	//}
 
-	// Mutex para Naves Invasoras
+	// Naves Invasoras
 	muNavInvs = CreateMutex(NULL, FALSE, NULL);
 	if (muNavInvs == NULL) {
 		_tprintf(TEXT("ERRO ao criar mutex para Naves Invasoras: %d\n"), GetLastError());
 		exit(1);
 	}
-	// Threat Naves Invasoras
-	htNavInvs = CreateThread(NULL, 0, inicia_naves_invasoras, (LPVOID)jogo->naves_invasoras, 0, &idNavInvs);
+	htNavInvs = CreateThread(NULL, 0, naves_invasoras, (LPVOID)jogo->naves_invasoras, 0, &idNavInvs);
 	if (htNavInvs != NULL) {
 		_tprintf(TEXT("[Thread Naves Invasoras] id=%d;\n"), idNavInvs);
 	}
@@ -52,14 +60,13 @@ int _tmain(int argc, TCHAR *argv[]) {
 		exit(1);
 	}
 
-	// Mutex para Naves Defensoras
+	// Naves Defensoras
 	muNavDefs = CreateMutex(NULL, FALSE, NULL);
 	if (muNavDefs == NULL) {
 		_tprintf(TEXT("ERRO ao criar mutex para Naves Defensoras: %d\n"), GetLastError());
 		exit(1);
 	}
-	// Threat Naves Defensoras
-	htNavDefs = CreateThread(NULL, 0, inicia_naves_defensoras, (LPVOID)jogo->naves_defensoras, 0, &idNavDefs);
+	htNavDefs = CreateThread(NULL, 0, naves_defensoras, (LPVOID)jogo->naves_defensoras, 0, &idNavDefs);
 	if (htNavDefs != NULL) {
 		_tprintf(TEXT("[Thread Naves Defensoras] id=%d;\n"), idNavDefs);
 	}
@@ -68,76 +75,68 @@ int _tmain(int argc, TCHAR *argv[]) {
 		exit(1);
 	}
 
-	// Mutex para Bombas
-	muBombas = CreateMutex(NULL, FALSE, NULL);
-	if (muBombas == NULL) {
-		_tprintf(TEXT("ERRO ao criar mutex para Bombas: %d\n"), GetLastError());
+	// Batalha
+	muBatalha = CreateMutex(NULL, FALSE, NULL);
+	if (muBatalha == NULL) {
+		_tprintf(TEXT("ERRO ao criar mutex para Batalha: %d\n"), GetLastError());
 		exit(1);
 	}
-	// Threat Bombas
-	htBombas = CreateThread(NULL, 0, inicia_bombas, (LPVOID)jogo->bombas, 0, &idBombas);
-	if (htBombas != NULL) {
-		_tprintf(TEXT("[Thread Bombas] id=%d;\n"), idBombas);
+	htBatalha = CreateThread(NULL, 0, batalha, (LPVOID)jogo, 0, &idBatalha);
+	if (htBatalha != NULL) {
+		_tprintf(TEXT("[Thread Batalha] id=%d;\n"), idBatalha);
 	}
 	else {
-		_tprintf(TEXT("ERRO ao criar Thread de Bombas: %d\n"), GetLastError());
+		_tprintf(TEXT("ERRO ao criar Thread de Batalha: %d\n"), GetLastError());
 		exit(1);
 	}
 
-	// Mutex para Tiros
-	muTiros = CreateMutex(NULL, FALSE, NULL);
-	if (muTiros == NULL) {
-		_tprintf(TEXT("ERRO ao criar mutex para Tiros: %d\n"), GetLastError());
+	// Efeitos
+	muEfeitos = CreateMutex(NULL, FALSE, NULL);
+	if (muEfeitos == NULL) {
+		_tprintf(TEXT("ERRO ao criar mutex para Efeitos: %d\n"), GetLastError());
 		exit(1);
 	}
-	// Threat Tiros
-	htTiros = CreateThread(NULL, 0, inicia_tiros, (LPVOID)jogo->tiros, 0, &idTiros);
-	if (htTiros != NULL) {
-		_tprintf(TEXT("[Thread Tiros] id=%d;\n"), idTiros);
+	htEfeitos = CreateThread(NULL, 0, efeitos, (LPVOID)jogo, 0, &idEfeitos);
+	if (htEfeitos != NULL) {
+		_tprintf(TEXT("[Thread Efeitos] id=%d;\n"), idEfeitos);
 	}
 	else {
-		_tprintf(TEXT("ERRO ao criar Thread de Tiros: %d\n"), GetLastError());
+		_tprintf(TEXT("ERRO ao criar Thread de Efeitos: %d\n"), GetLastError());
 		exit(1);
 	}
 
-	// Mutex para PowerUps
-	muPowerUps = CreateMutex(NULL, FALSE, NULL);
-	if (muPowerUps == NULL) {
-		_tprintf(TEXT("ERRO ao criar mutex para PowerUps: %d\n"), GetLastError());
+	// Jogadores
+	muJogadores = CreateMutex(NULL, FALSE, NULL);
+	if (muJogadores == NULL) {
+		_tprintf(TEXT("ERRO ao criar mutex para Jogadores: %d\n"), GetLastError());
 		exit(1);
 	}
 	// Threat PowerUps
-	htPowerUps = CreateThread(NULL, 0, inicia_powerups, (LPVOID)jogo->powerups, 0, &idPowerUps);
-	if (htPowerUps != NULL) {
-		_tprintf(TEXT("[Thread PowerUps] id=%d;\n"), idPowerUps);
+	htJogadores = CreateThread(NULL, 0, jogadores, (LPVOID)jogo, 0, &idJogadores); // jogo->clientes add cliente to dados
+	if (htJogadores != NULL) {
+		_tprintf(TEXT("[Thread Jogadores] id=%d;\n"), idJogadores);
 	}
 	else {
-		_tprintf(TEXT("ERRO ao criar Thread de PowerUps: %d\n"), GetLastError());
+		_tprintf(TEXT("ERRO ao criar Thread de Jogadores: %d\n"), GetLastError());
 		exit(1);
 	}
 
-	mostra_naves_invasoras(jogo->naves_invasoras);
-	mostra_naves_defensoras(jogo->naves_defensoras);
-	mostra_bombas(jogo->bombas);
-	mostra_tiros(jogo->tiros);
-	mostra_powerups(jogo->powerups);
-
 	WaitForSingleObject(htNavInvs, INFINITE);
 	WaitForSingleObject(htNavDefs, INFINITE);
-	WaitForSingleObject(htBombas, INFINITE);
-	WaitForSingleObject(htTiros, INFINITE);
-	WaitForSingleObject(htPowerUps, INFINITE);
+	WaitForSingleObject(htBatalha, INFINITE);
+	WaitForSingleObject(htEfeitos, INFINITE);
+	WaitForSingleObject(htJogadores, INFINITE);
 
 	CloseHandle(muNavInvs);
 	CloseHandle(muNavDefs);
-	CloseHandle(muBombas);
-	CloseHandle(muTiros);
-	CloseHandle(muPowerUps);
+	CloseHandle(muBatalha);
+	CloseHandle(muEfeitos);
+	CloseHandle(muJogadores);
 
 	//CloseHandle(hEvJogo);
 	UnmapViewOfFile(jogo);
 	CloseHandle(hMapMemParJogo);
 
-	_tprintf(TEXT("\n\nTerminou!!\n"));
+	_tprintf(TEXT("\nTerminou!!\n\n"));
 	return 0;
 }
