@@ -45,15 +45,19 @@ typedef struct {
 } Bomba;
 
 typedef struct {
+	Pos				coord;
+}Obstaculo;
+
+typedef struct {
 	unsigned int	tamanho;
 	Pos				coord;
-	PowerUp			powerup;
+	PowerUp			powerup; //as invasoras não têm powerups mas sim tipos de naves(por exemplo: básica e esquiva)
 } NaveInvasora;
 
 typedef struct {
 	unsigned int	tamanho;
 	Pos				coord;
-	PowerUp			powerup;
+	PowerUp			powerup; //aqui não tem de ser array?
 } NaveDefensora;
 
 typedef struct {
