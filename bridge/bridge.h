@@ -2,17 +2,15 @@
 
 #include <windows.h>
 #include <tchar.h>
+//#include "../servidor/dados.h"
+#include "../servidor/dados.h"
 
 #define TAM 80 // isto é para retirar
 
 typedef struct {
-	LARGE_INTEGER msg;
-} MENSAGEM;
-
-// Memoria partilhada
-MENSAGEM *mensagens;
-
-// Threads?
+	int nave_defensora[NUM_NAV_DEFENSORAS];
+	char texto[TAM];
+} Mensagem;
 
 #ifdef BRIDGE_EXPORTS
 #define BRIDGE_API __declspec(dllexport)
@@ -25,10 +23,6 @@ extern "C" {
 	int BRIDGE_API Teste(void);
 	int BRIDGE_API UmValor(int v);
 
-	void BRIDGE_API gotoxy(int x, int y);
-
 	int BRIDGE_API patrao();
 	int BRIDGE_API empregado();
-
-	int BRIDGE_API inicia_campo(void);
 }

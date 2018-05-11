@@ -1,39 +1,8 @@
 #include "servidor.h"
 
-int inicia_naves(TCHAR *argv) {
-	////int i;
-	//naves_invasoras = calloc(NUM_INVASORAS, sizeof(NAVE));
-	//if (naves_invasoras == NULL) {
-	//	_tprintf(TEXT("\n%s: Erro na alocacao de memoria das naves invasoras"), argv);
-	//	return 1;
-	//}
-	///*for (i = 0; i < N_INVASORAS; i++) {
-	//naves_invasoras[i].tamanho = 0;
-	//naves_invasoras[i].x = 0;
-	//naves_invasoras[i].y = 0;
-	//naves_invasoras[i].powerup = 0;
-	//naves_invasoras[i].powerupType = 'n';
-	//}*/
-	//naves_defensoras = calloc(NUM_DEFENSORAS, sizeof(NAVE));
-	//if (naves_defensoras == NULL) {
-	//	_tprintf(TEXT("\n%s: Erro na alocacao de memoria das naves defensoras!"), argv);
-	//	return 1;
-	//}
-	///*for (i = 0; i < N_DEFENSORAS; i++) {
-	//naves_defensoras[i].tamanho = 0;
-	//naves_defensoras[i].x = 0;
-	//naves_defensoras[i].y = 0;
-	//naves_defensoras[i].powerup = 0;
-	//naves_defensoras[i].powerupType = 'n';
-	//}*/
-	return 0;
-}
-
-//void mostra_naves(NAVE *equipa, int tamanho) {
-//int i;
-//for (i = 0; i < tamanho; i++)
-//	_tprintf(TEXT("\n[Nave]: id=%d, tamnho=%d, x=%d, y=%d, powerup=%d, powerupType=%c;"), i, equipa[i].tamanho, equipa[i].x, equipa[i].y, equipa[i].powerup, equipa[i].powerupType);
-//}
+// Variaveis globais
+Jogo		jogo;
+Mensagem	mensagens;
 
 int _tmain(int argc, TCHAR *argv[]) {
 #ifdef UNICODE
@@ -42,7 +11,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 #endif
 
 	system("cls");
-	_tprintf(TEXT("%s: pronto..."), argv[0]);
+	_tprintf(TEXT("pronto...") );
 
 	//Chamar a funcao da Dll
 	//Teste();
@@ -51,13 +20,13 @@ int _tmain(int argc, TCHAR *argv[]) {
 	//_tprintf(TEXT("\nBridge: A executar patrao..."));
 	//patrao();
 
-	inicia_naves(argv[0]);
+	inicia_jogo(&jogo);
+	mostra_naves_invasoras(jogo.naves_invasoras);
+	mostra_naves_defensoras(jogo.naves_defensoras);
+	mostra_bombas(jogo.bombas);
+	mostra_tiros(jogo.tiros);
+	mostra_powerups(jogo.powerups);
 
-	//_tprintf(TEXT("\n%s: Naves Invasoras:"), argv[0]);
-	//mostra_naves(naves_invasoras, NUM_INVASORAS);
-	//_tprintf(TEXT("\n%s: Naves Defensoras:"), argv[0]);
-	//mostra_naves(naves_defensoras, NUM_DEFENSORAS);
-
-	_tprintf(TEXT("\n%s: terminou..."), argv[0]);
+	_tprintf(TEXT("\nterminou..."));
 	return 0;
 }
