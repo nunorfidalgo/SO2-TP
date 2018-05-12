@@ -8,70 +8,60 @@ int BRIDGE_API UmValor(int v) {
 	return v;
 }
 
-int BRIDGE_API patrao() {
-	_tprintf(TEXT("\nPatrao:"));
-	HANDLE	hEvent;
-	TCHAR *cmd;
-
-	HANDLE hMap; // hFile
-
+void BRIDGE_API escreve_msgs(int id) {
+	HANDLE		hEvent;
+	Mensagem	*msgs;
+	HANDLE		hMap;
 	LARGE_INTEGER t;
-	t.QuadPart = TAM * sizeof(TCHAR);
-	hMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, t.HighPart, t.LowPart, TEXT("shm"));
-	cmd = (TCHAR *)MapViewOfFile(hMap, FILE_MAP_WRITE, 0, 0, (SIZE_T)t.QuadPart);
-
+	t.QuadPart = sizeof(Mensagem);
+	hMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, t.HighPart, t.LowPart, TEXT("Mensagens"));
+	// falta if para testar 
+	msgs = (Mensagem *)MapViewOfFile(hMap, FILE_MAP_WRITE, 0, 0, (SIZE_T)t.QuadPart);
 	// Event
-	hEvent = CreateEvent(NULL, true, false, TEXT("evento"));
+	hEvent = CreateEvent(NULL, true, false, TEXT("EvMensagens"));
 	if (hEvent == NULL) {
-		_tprintf(TEXT("CreateEvent error: %d\n"), GetLastError());
-		return 1;
+		_tprintf(TEXT("ERRO ao criar evento de Mensagens: %d\n"), GetLastError());
+		exit(1);
 	}
 	do {
-		_tprintf(TEXT("CMD: "));
-		_fgetts(cmd, TAM, stdin);
-		cmd[_tcslen(cmd) - 1] = TEXT('\0');
-		_tprintf(TEXT("Escrevi %d bytes: '%s'\n"), (int)(_tcslen(cmd) + 1), cmd);
+		_tprintf(TEXT("enviar mensagem: "));
+		_fgetts(msgs->texto, TEXTO, stdin);
+		msgs->idJogador = id;
+		msgs->texto[_tcslen(msgs->texto) - 1] = TEXT('\0');
+		if (_tcsncmp(msgs->texto, TEXT("ajuda"), 5) == 0) {
+			_tprintf(TEXT("fim: termina\n"));
+		}
 		SetEvent(hEvent);
 		ResetEvent(hEvent);
-	} while (_tcsncmp(cmd, TEXT("fim"), 3) != 0);
-
+	} while (_tcsncmp(msgs->texto, TEXT("fim"), 3) != 0);
 	CloseHandle(hEvent);
-	UnmapViewOfFile(cmd);
+	UnmapViewOfFile(msgs);
 	CloseHandle(hMap);
-
-	_tprintf(TEXT("\nPatrao: fim"));
-	return 0;
 }
 
-int BRIDGE_API empregado() {
-	_tprintf(TEXT("\nEmpregado: "));
-	HANDLE	hEvent;
-	TCHAR *cmd;
-
-	HANDLE hMap;
-
+void BRIDGE_API le_msgs() {
+	HANDLE		hEvent;
+	Mensagem	*msgs;
+	HANDLE		hMap;
 	LARGE_INTEGER t;
-	t.QuadPart = TAM * sizeof(TCHAR);
-	hMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READONLY, t.HighPart, t.LowPart, TEXT("shm"));
-	cmd = (TCHAR *)MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, (SIZE_T)t.QuadPart);
-
+	t.QuadPart = sizeof(Mensagem);
+	hMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READONLY, t.HighPart, t.LowPart, TEXT("Mensagens"));
+	msgs = (Mensagem *)MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, (SIZE_T)t.QuadPart);
 	// Event
-	hEvent = OpenEvent(SYNCHRONIZE, true, TEXT("evento"));
+	hEvent = OpenEvent(SYNCHRONIZE, true, TEXT("EvMensagens"));
 	if (hEvent == NULL) {
-		_tprintf(TEXT("CreateEvent error: %d\n"), GetLastError());
-		return 1;
+		_tprintf(TEXT("ERRO ao aceder ao evento de Mensagens: %d\n"), GetLastError());
+		exit (1);
 	}
 	do {
 		WaitForSingleObject(hEvent, INFINITE);
-		_tprintf(TEXT("Li '%s' (%d bytes)\n"), cmd, (int)_tcslen(cmd) + 1);
-
-	} while (_tcsncmp(cmd, TEXT("fim"), 3) != 0);
-
+		if (_tcsncmp(msgs->texto, TEXT("ajuda"), 5) != 0) {
+			_tprintf(TEXT("mensagem[%d]: %s\n"), msgs->idJogador, msgs->texto);
+		}
+	} while (_tcsncmp(msgs->texto, TEXT("fim"), 3) != 0);
 	CloseHandle(hEvent);
-	UnmapViewOfFile(cmd);
+	UnmapViewOfFile(msgs);
 	CloseHandle(hMap);
-	_tprintf(TEXT("\nEmpregado: fim"));
-	return 0;
 }
 
 Jogo BRIDGE_API * MemoriaPartilhadaJogo(HANDLE	&hMapMemParJogo, LARGE_INTEGER &tam_jogo) {

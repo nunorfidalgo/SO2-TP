@@ -49,21 +49,23 @@ int _tmain(int argc, TCHAR *argv[]) {
 
 	_tprintf(TEXT("\n"));
 
-	mensagens = MemoriaPartilhadaMensagens(hMapMemParMsg, tam_mensagem);
+	le_msgs();
 
-	hEvMsg = CreateEvent(NULL, true, false, TEXT("EvMensagens"));
-	if (hEvMsg == NULL) {
-		_tprintf(TEXT("CreateEvent error: %d\n"), GetLastError());
-		exit(1);
-	}
+	//mensagens = MemoriaPartilhadaMensagens(hMapMemParMsg, tam_mensagem);
 
-	while (true) {
-		LeMensagens(mensagens, hEvMsg);
-	}
+	//hEvMsg = CreateEvent(NULL, true, false, TEXT("EvMensagens"));
+	//if (hEvMsg == NULL) {
+	//	_tprintf(TEXT("CreateEvent error: %d\n"), GetLastError());
+	//	exit(1);
+	//}
 
-	CloseHandle(hEvMsg);
-	UnmapViewOfFile(mensagens);
-	CloseHandle(hMapMemParMsg);
+	//while (true) {
+	//	LeMensagens(mensagens, hEvMsg);
+	//}
+
+	//CloseHandle(hEvMsg);
+	//UnmapViewOfFile(mensagens);
+	//CloseHandle(hMapMemParMsg);
 
 	//// Event
 	//hEvJogo = CreateEvent(NULL, true, false, TEXT("Evento"));

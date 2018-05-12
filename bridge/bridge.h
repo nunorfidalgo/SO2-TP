@@ -16,8 +16,8 @@ extern "C" {
 	int BRIDGE_API UmValor(int v);
 
 	// Mensagens
-	int BRIDGE_API patrao();
-	int BRIDGE_API empregado();
+	void BRIDGE_API escreve_msgs(int id);
+	void BRIDGE_API le_msgs();
 
 	Jogo BRIDGE_API * MemoriaPartilhadaJogo(HANDLE &hMapMemParJogo, LARGE_INTEGER &tam_jogo);
 

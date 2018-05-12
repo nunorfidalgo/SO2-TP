@@ -16,21 +16,23 @@ int _tmain(int argc, TCHAR *argv[]) {
 	system("cls");
 	_tprintf(TEXT("pronto...\n"));
 
-	mensagens = MemoriaPartilhadaMensagens(hMapMemParMsg, tam_mensagem);
+	escreve_msgs(58);
 
-	hEvMsg = OpenEvent(SYNCHRONIZE, true, TEXT("EvMensagens"));
-	if (hEvMsg == NULL) {
-		_tprintf(TEXT("ERRO ao criar evento para Mensagens: %d\n"), GetLastError());
-		exit(1);
-	}
+	//mensagens = MemoriaPartilhadaMensagens(hMapMemParMsg, tam_mensagem);
 
-	while (true) {
-		EscreveMensagens(59, mensagens, hEvMsg);
-	}
+	//hEvMsg = OpenEvent(SYNCHRONIZE, true, TEXT("EvMensagens"));
+	//if (hEvMsg == NULL) {
+	//	_tprintf(TEXT("ERRO ao criar evento para Mensagens: %d\n"), GetLastError());
+	//	exit(1);
+	//}
 
-	CloseHandle(hEvMsg);
-	UnmapViewOfFile(mensagens);
-	CloseHandle(hMapMemParMsg);
+	//while (true) {
+	//	EscreveMensagens(59, mensagens, hEvMsg);
+	//}
+
+	//CloseHandle(hEvMsg);
+	//UnmapViewOfFile(mensagens);
+	//CloseHandle(hMapMemParMsg);
 
 	_tprintf(TEXT("\nterminou...\n"));
 	return 0;
