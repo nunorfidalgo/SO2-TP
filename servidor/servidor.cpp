@@ -29,12 +29,16 @@ int _tmain(int argc, TCHAR *argv[]) {
 
 	jogo = CriaMemoriaPartilhadaJogo(hMapMemParJogo, tam_jogo);
 
+	init_rand();
+
 	inicia_jogo(jogo);
 	mostra_naves_invasoras(jogo->naves_invasoras);
 	mostra_naves_defensoras(jogo->naves_defensoras);
 	mostra_bombas(jogo->bombas);
 	mostra_tiros(jogo->tiros);
 	mostra_powerups(jogo->powerups);
+	mostra_pontuacoes(jogo->pontuacoes);
+	mostra_obstaculos(jogo->obstaculos);
 
 	_tprintf(TEXT("\n"));
 

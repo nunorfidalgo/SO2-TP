@@ -44,3 +44,6 @@ $(SolutionDir)x64\Release\bridge.lib
 
 * Ideias a implementar extra
 * Nave gigante a cada 3 niveis com maior resistencia, maior dimensao, maior numero de tiros
+
+# cmds
+TASKLIST /FI "IMAGENAME eq servidor.exe"

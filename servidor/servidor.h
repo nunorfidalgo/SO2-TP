@@ -1,5 +1,6 @@
 #pragma once
 
-#include "../dados.h"
 #include "../bridge/bridge.h"
+#include "../dados.h"
+#include "utils.h"
 #include "jogo.h"

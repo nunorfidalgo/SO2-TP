@@ -15,8 +15,8 @@
 #define NUM_BOMBAS 10
 #define NUM_TIROS 10
 #define NUM_POWERUP 2
+#define NUM_POWERUPS_NAVE 2
 #define NUM_OBSTACULOS 5
-#define NUM_POWERUPS_NAVE 3
 
 #define LIMITEY_NAV_DEFENSORAS 0.2
 #define TAM 80 // isto é para retirar
@@ -31,58 +31,56 @@ typedef struct {
 typedef struct {
 	unsigned int	x;
 	unsigned int	y;
-} Pos; // coordenadas (nao se pode usar Coord, é reservado)
+} Posicao; // coordenadas (nao se pode usar Coord, é reservado)
 
 // Dimensao dos elementos do jogo
 typedef struct {
 	unsigned int	altura;
 	unsigned int	largura;
-}Dimensao;
+} Dimensao;
 
-// Elemento de jogo - Powerup
+// Elemento de jogo - Bomba
 typedef struct {
-	unsigned int	duracao;
 	unsigned int	velocidade;
-	SYSTEMTIME		adquirido;
-	unsigned int	ocorrencia;
-	char			tipo; // definir tipos de powerups, 0-> nenhum, ver lista
-	Dimensao		dimensao;
-	Pos				coord;
-} PowerUp;
+	Posicao			coord;
+} Bomba;
 
 // Elemento de jogo - Tiro
 typedef struct {
-	Pos				coord;
 	unsigned int	velocidade;
+	Posicao			coord;
 } Tiro;
 
+// Elemento de jogo - Powerup
 typedef struct {
-	Pos				coord;
+	SYSTEMTIME		adquirido;
+	unsigned int	duracao;
 	unsigned int	velocidade;
-} Bomba;
-
-typedef struct {
-	Pos				coord;
+	unsigned int	ocorrencia;
+	char			tipo; // definir tipos de powerups, 0-> nenhum, ver lista
 	Dimensao		dimensao;
-	unsigned int	resistencia;
-}Obstaculo;
+	Posicao			coord;
+} PowerUp;
 
+// Elemento de jogo - Nave Invasora
 typedef struct {
 	unsigned int	resistencia;
 	unsigned int	velocidade;
 	char			tipo;
 	Dimensao		dimensao;
-	Pos				coord;
+	Posicao			coord;
 } NaveInvasora;
 
+// Elemento de jogo - Nave Defensora
 typedef struct {
 	unsigned int	vidas;
 	unsigned int	velocidade;
-	Pos				coord;
-	PowerUp			powerup[NUM_POWERUPS_NAVE];
+	Posicao			coord;
 	Dimensao		dimensao;
+	PowerUp			powerup[NUM_POWERUPS_NAVE];
 } NaveDefensora;
 
+// Elemento de jogo - Pontuacao de cada jogador
 typedef struct {
 	unsigned int	pontos;
 	unsigned int	disparos;
@@ -92,13 +90,20 @@ typedef struct {
 	unsigned int	colisoes;
 } Pontuacao;
 
+// Elemento de jogo - Extra
+typedef struct {
+	unsigned int	resistencia;
+	Posicao			coord;
+	Dimensao		dimensao;
+} Obstaculo;
+
 typedef struct {
 	unsigned int	nivel; // ???? será assim para designar o nível / como fazer o incremento de dificuldade ????
-	Pontuacao		pontuacoes[NUM_NAV_DEFENSORAS];
 	NaveInvasora	naves_invasoras[NUM_NAV_INVASORAS];
 	NaveDefensora	naves_defensoras[NUM_NAV_DEFENSORAS];
 	Bomba			bombas[NUM_BOMBAS];
 	Tiro			tiros[NUM_TIROS];
 	PowerUp			powerups[NUM_POWERUP];
+	Pontuacao		pontuacoes[NUM_NAV_DEFENSORAS];
 	Obstaculo		obstaculos[NUM_OBSTACULOS];
 } Jogo;
