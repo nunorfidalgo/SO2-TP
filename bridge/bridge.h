@@ -19,7 +19,12 @@ extern "C" {
 	int BRIDGE_API patrao();
 	int BRIDGE_API empregado();
 
-	Jogo BRIDGE_API * CriaMemoriaPartilhadaJogo(HANDLE &hMapMemParJogo, LARGE_INTEGER &tam_jogo);
+	Jogo BRIDGE_API * MemoriaPartilhadaJogo(HANDLE &hMapMemParJogo, LARGE_INTEGER &tam_jogo);
+
+	// Mensagens
+	Mensagem BRIDGE_API * MemoriaPartilhadaMensagens(HANDLE	&hMapMemParMsg, LARGE_INTEGER &tam_mensagem);
+	void BRIDGE_API EscreveMensagens(int idJogador, Mensagem *mensagens, HANDLE hEvMsg);
+	void BRIDGE_API LeMensagens(Mensagem *mensagens, HANDLE hEvMsg);
 
 	void BRIDGE_API gotoxy(int x, int y);
 }

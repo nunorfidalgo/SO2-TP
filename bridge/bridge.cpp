@@ -58,7 +58,7 @@ int BRIDGE_API empregado() {
 	// Event
 	hEvent = OpenEvent(SYNCHRONIZE, true, TEXT("evento"));
 	if (hEvent == NULL) {
-		_tprintf(TEXT("CreateSemaphore error: %d\n"), GetLastError());
+		_tprintf(TEXT("CreateEvent error: %d\n"), GetLastError());
 		return 1;
 	}
 	do {
@@ -74,7 +74,7 @@ int BRIDGE_API empregado() {
 	return 0;
 }
 
-Jogo BRIDGE_API * CriaMemoriaPartilhadaJogo(HANDLE	&hMapMemParJogo, LARGE_INTEGER &tam_jogo) {
+Jogo BRIDGE_API * MemoriaPartilhadaJogo(HANDLE	&hMapMemParJogo, LARGE_INTEGER &tam_jogo) {
 	tam_jogo.QuadPart = sizeof(Jogo);
 	Jogo *tmp;
 	hMapMemParJogo = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_jogo.HighPart, tam_jogo.LowPart, TEXT("Jogo"));
@@ -82,10 +82,44 @@ Jogo BRIDGE_API * CriaMemoriaPartilhadaJogo(HANDLE	&hMapMemParJogo, LARGE_INTEGE
 		_tprintf(TEXT("ERRO ao criar memoria partilhada para o Jogo: %d\n"), GetLastError());
 		exit(1);
 	}
-	tmp = (Jogo *)MapViewOfFile(hMapMemParJogo, FILE_MAP_WRITE, 0, 0, (SIZE_T)tam_jogo.QuadPart);
+	tmp = (Jogo *)MapViewOfFile(hMapMemParJogo, FILE_MAP_ALL_ACCESS, 0, 0, (SIZE_T)tam_jogo.QuadPart);
 	return tmp;
 }
 
+//Mensagem BRIDGE_API * CriaMemoriaPartilhadaMensagens(HANDLE	&hMapMemParMsg, LARGE_INTEGER &tam_mensagem) {
+//	tam_mensagem.QuadPart = sizeof(Mensagem);
+//	hMapMemParMsg = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_mensagem.HighPart, tam_mensagem.LowPart, TEXT("Mensagens"));
+//	if (hMapMemParMsg == NULL) {
+//		_tprintf(TEXT("ERRO ao criar memoria partilhada para Mensagens: %d\n"), GetLastError());
+//		exit(1);
+//	}
+//	return (Mensagem *)MapViewOfFile(hMapMemParMsg, FILE_MAP_WRITE, 0, 0, (SIZE_T)tam_mensagem.QuadPart);
+//}
+
+Mensagem BRIDGE_API * MemoriaPartilhadaMensagens(HANDLE	&hMapMemParMsg, LARGE_INTEGER &tam_mensagem) {
+	tam_mensagem.QuadPart = sizeof(Mensagem);
+	hMapMemParMsg = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_mensagem.HighPart, tam_mensagem.LowPart, TEXT("Mensagens"));
+	if (hMapMemParMsg == NULL) {
+		_tprintf(TEXT("ERRO ao criar memoria partilhada para Mensagens: %d\n"), GetLastError());
+		exit(1);
+	}
+	return (Mensagem *)MapViewOfFile(hMapMemParMsg, FILE_MAP_ALL_ACCESS, 0, 0, (SIZE_T)tam_mensagem.QuadPart);
+}
+
+void BRIDGE_API EscreveMensagens(int idJogador, Mensagem *mensagens, HANDLE hEvMsg) {
+	_tprintf(TEXT("enviar: "));
+	_fgetts(mensagens->texto, TEXTO, stdin);
+	mensagens->idJogador = idJogador;
+	mensagens->texto[_tcslen(mensagens->texto) - 1] = TEXT('\0');
+	_tprintf(TEXT("mensagem[%d]: %s\n"), mensagens->idJogador, mensagens->texto);
+	SetEvent(hEvMsg);
+	ResetEvent(hEvMsg);
+}
+
+void BRIDGE_API LeMensagens(Mensagem *mensagens, HANDLE hEvMsg) {
+	WaitForSingleObject(hEvMsg, INFINITE);
+	_tprintf(TEXT("mensagem[%d]: %s\n"), mensagens->idJogador, mensagens->texto);
+}
 
 void gotoxy(int x, int y) {
 	static HANDLE hStdout = NULL;

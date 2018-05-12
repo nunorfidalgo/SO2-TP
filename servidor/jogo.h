@@ -19,7 +19,7 @@ void mostra_powerups(PowerUp *powerups);
 void mostra_pontuacoes(Pontuacao *pontuacoes);
 void mostra_obstaculos(Obstaculo *obstaculos);
 
-// Funcões para as Threads
+/*********** Fuções das Threads ***********/
 DWORD __stdcall naves_invasoras(void *ptr);
 DWORD __stdcall naves_defensoras(void *ptr);
 DWORD __stdcall batalha(void *ptr);

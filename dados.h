@@ -19,11 +19,13 @@
 #define NUM_OBSTACULOS 5
 
 #define LIMITEY_NAV_DEFENSORAS 0.2
+#define TEXTO 160
 #define TAM 80 // isto é para retirar
 
 typedef struct {
-	int nave_defensora[NUM_NAV_DEFENSORAS];
-	char texto[TAM];
+	unsigned int	idJogador;
+	TCHAR			texto[TEXTO];
+	//HANDLE			hEvMsg;
 } Mensagem;
 
 // Estrutura de dados

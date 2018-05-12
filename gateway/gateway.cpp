@@ -7,16 +7,31 @@ int _tmain(int argc, TCHAR *argv[]) {
 	_setmode(_fileno(stdout), _O_WTEXT);
 #endif
 
+	// Variaveis
+	Mensagem		*mensagens;
+
+	HANDLE			hMapMemParMsg, hEvMsg;
+	LARGE_INTEGER	tam_mensagem;
+
 	system("cls");
-	_tprintf(TEXT("\nGateway: pronto..."));
+	_tprintf(TEXT("pronto...\n"));
 
-	//Chamar a funcao da Dll
-	//Teste();
-	//_tprintf(TEXT("\nBridge: Valor: %d"), UmValor(120));
+	mensagens = MemoriaPartilhadaMensagens(hMapMemParMsg, tam_mensagem);
 
-	//_tprintf(TEXT("\nBridge: A executar empregado..."));
-	//empregado();
+	hEvMsg = OpenEvent(SYNCHRONIZE, true, TEXT("EvMensagens"));
+	if (hEvMsg == NULL) {
+		_tprintf(TEXT("ERRO ao criar evento para Mensagens: %d\n"), GetLastError());
+		exit(1);
+	}
 
-	_tprintf(TEXT("\nGateway: terminou...\n"));
+	while (true) {
+		EscreveMensagens(59, mensagens, hEvMsg);
+	}
+
+	CloseHandle(hEvMsg);
+	UnmapViewOfFile(mensagens);
+	CloseHandle(hMapMemParMsg);
+
+	_tprintf(TEXT("\nterminou...\n"));
 	return 0;
 }
