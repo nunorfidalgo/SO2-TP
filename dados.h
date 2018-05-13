@@ -14,8 +14,8 @@
 #define NUM_NAV_DEFENSORAS 2 // equivalente ao num de clientes, um cliente por cada nave defensora
 #define NUM_BOMBAS 10
 #define NUM_TIROS 10
-#define NUM_POWERUP 2
-#define NUM_POWERUPS_NAVE 2
+#define NUM_POWERUPS 2
+#define NUM_POWERUPS_NAV_DEF 2
 #define NUM_OBSTACULOS 5
 
 #define LIMITEY_NAV_DEFENSORAS 0.2
@@ -79,7 +79,7 @@ typedef struct {
 	unsigned int	velocidade;
 	Posicao			coord;
 	Dimensao		dimensao;
-	PowerUp			powerup[NUM_POWERUPS_NAVE];
+	PowerUp			powerup[NUM_POWERUPS_NAV_DEF];
 } NaveDefensora;
 
 // Elemento de jogo - Pontuacao de cada jogador
@@ -105,7 +105,7 @@ typedef struct {
 	NaveDefensora	naves_defensoras[NUM_NAV_DEFENSORAS];
 	Bomba			bombas[NUM_BOMBAS];
 	Tiro			tiros[NUM_TIROS];
-	PowerUp			powerups[NUM_POWERUP];
+	PowerUp			powerups[NUM_POWERUPS];
 	Pontuacao		pontuacoes[NUM_NAV_DEFENSORAS];
 	Obstaculo		obstaculos[NUM_OBSTACULOS];
 } Jogo;

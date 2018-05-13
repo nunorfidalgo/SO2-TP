@@ -6,21 +6,17 @@ int _tmain(int argc, TCHAR *argv[]) {
 	_setmode(_fileno(stdout), _O_WTEXT);
 #endif
 
-	// Variaveis
+	// Variáveis Jogo
 	Jogo			*jogo;
-	Mensagem		*mensagens;
-	//HANDLE		hEvJogo;
-
-	// Memoria partilha para o Jogo
-	HANDLE			hMapMemParJogo;
+	HANDLE			hMapMemParJogo, hEvJogo;
 	LARGE_INTEGER	tam_jogo;
-
 	// Threads do Jogo
 	HANDLE			muNavInvs, muNavDefs, muBatalha, muEfeitos, muJogadores;
 	HANDLE			htNavInvs, htNavDefs, htBatalha, htEfeitos, htJogadores;
 	DWORD			idNavInvs, idNavDefs, idBatalha, idEfeitos, idJogadores;
 
-	// Memoria partilha para as Mensagens
+	// Variáveis Mensagens
+	Mensagem		*mensagens;
 	HANDLE			hMapMemParMsg, hEvMsg;
 	LARGE_INTEGER	tam_mensagem;
 
@@ -37,8 +33,8 @@ int _tmain(int argc, TCHAR *argv[]) {
 	jogo = MemoriaPartilhadaJogo(hMapMemParJogo, tam_jogo);
 
 	init_rand();
-
 	inicia_jogo(jogo);
+
 	mostra_naves_invasoras(jogo->naves_invasoras);
 	mostra_naves_defensoras(jogo->naves_defensoras);
 	mostra_bombas(jogo->bombas);
@@ -47,11 +43,11 @@ int _tmain(int argc, TCHAR *argv[]) {
 	mostra_pontuacoes(jogo->pontuacoes);
 	mostra_obstaculos(jogo->obstaculos);
 
-	_tprintf(TEXT("\n"));
+	_tprintf(TEXT("\nMensagens: \n"));
 
-	le_msgs();
+	//le_msgs();
 
-	//mensagens = MemoriaPartilhadaMensagens(hMapMemParMsg, tam_mensagem);
+	mensagens = MemoriaPartilhadaMensagens(hMapMemParMsg, tam_mensagem);
 
 	//hEvMsg = CreateEvent(NULL, true, false, TEXT("EvMensagens"));
 	//if (hEvMsg == NULL) {
@@ -59,13 +55,17 @@ int _tmain(int argc, TCHAR *argv[]) {
 	//	exit(1);
 	//}
 
-	//while (true) {
-	//	LeMensagens(mensagens, hEvMsg);
-	//}
+	hEvMsg = CreateEvent(NULL, true, false, TEXT("EvMensagens"));
+	if (hEvMsg == NULL) {
+		_tprintf(TEXT("ERRO ao criar evento de Mensagens: %d\n"), GetLastError());
+		exit(1);
+	}
 
-	//CloseHandle(hEvMsg);
-	//UnmapViewOfFile(mensagens);
-	//CloseHandle(hMapMemParMsg);
+	LeMensagens(mensagens, &hEvMsg);
+
+	CloseHandle(hEvMsg);
+	UnmapViewOfFile(mensagens);
+	CloseHandle(hMapMemParMsg);
 
 	//// Event
 	//hEvJogo = CreateEvent(NULL, true, false, TEXT("Evento"));

@@ -2,6 +2,7 @@
 #include "jogo.h"
 #include "utils.h"
 
+/**** Função de inicialização dos dados do jogo ****/
 void inicia_jogo(Jogo *jogo) {
 	_tprintf(TEXT("* Novo Jogo:\n"));
 	inicia_naves_invasoras(jogo->naves_invasoras);
@@ -13,6 +14,7 @@ void inicia_jogo(Jogo *jogo) {
 	inicia_obstaculos(jogo->obstaculos);
 }
 
+/**** Funções de mostrar os dados ****/
 void inicia_naves_invasoras(NaveInvasora *naves_invasoras) {
 	_tprintf(TEXT("* Inicia Naves Invasoras:\n"));
 	int i;
@@ -36,7 +38,7 @@ void inicia_naves_defensoras(NaveDefensora *naves_defensoras) {
 		naves_defensoras[i].coord.y = random_l_h(1, LINHAS);
 		naves_defensoras[i].dimensao.altura = random_l_h(1, 4);
 		naves_defensoras[i].dimensao.largura = random_l_h(1, 4);
-		for (j = 0; j < NUM_POWERUPS_NAVE; j++) {
+		for (j = 0; j < NUM_POWERUPS_NAV_DEF; j++) {
 			naves_defensoras[i].powerup[j].duracao = random_l_h(1, 30); // entre 0 a 30s
 			//naves_defensoras[i].powerup[j].adquirido = SYSTEMTIME??
 			naves_defensoras[i].powerup[j].velocidade = random_l_h(1, 10);
@@ -73,7 +75,7 @@ void inicia_tiros(Tiro *tiros) {
 void inicia_powerups(PowerUp *powerups) {
 	_tprintf(TEXT("* Inicia Naves Defensoras: \n"));
 	int i;
-	for (i = 0; i < NUM_POWERUP; i++) {
+	for (i = 0; i < NUM_POWERUPS; i++) {
 		powerups[i].duracao = random_l_h(1, 30); // entre 0 a 30s
 		//naves_defensoras[i].powerup[j].adquirido = SYSTEMTIME??
 		powerups[i].velocidade = random_l_h(1, 10);
@@ -111,58 +113,7 @@ void inicia_obstaculos(Obstaculo *obstaculos) {
 	}
 }
 
-void mostra_naves_invasoras(NaveInvasora *naves_invasoras) {
-	_tprintf(TEXT("\n# Mostra Naves Invasoras:\n"));
-	int i;
-	for (i = 0; i < NUM_NAV_INVASORAS; i++)
-		_tprintf(TEXT("[Nave]: id=%d, posição=(%d,%d), dimensao=(%d,%d), resistencia=%d, velocidade=%d, tipo=%c;\n"), i, naves_invasoras[i].coord.x, naves_invasoras[i].coord.y, naves_invasoras[i].dimensao.altura, naves_invasoras[i].dimensao.largura, naves_invasoras[i].resistencia, naves_invasoras[i].velocidade, naves_invasoras[i].tipo);
-}
-
-void mostra_naves_defensoras(NaveDefensora *naves_defensoras) {
-	_tprintf(TEXT("\n# Mostra Naves Defensoras:\n"));
-	int i, j;
-	for (i = 0; i < NUM_NAV_DEFENSORAS; i++)
-		_tprintf(TEXT("[Nave]: id=%d, posição=(%d,%d), dimensao=(%d,%d), vidas=%d, velocidade=%d\n"), i, naves_defensoras[i].coord.x, naves_defensoras[i].coord.y, naves_defensoras[i].dimensao.altura, naves_defensoras[i].dimensao.largura, naves_defensoras[i].vidas, naves_defensoras[i].velocidade);
-		for (j = 0; j < NUM_POWERUPS_NAVE; j++)
-			_tprintf(TEXT("[Nave->PowerUps]: id=%d, posição=(%d,%d), dimensao=(%d,%d), duracao=%d, adquirido=?, velocidade=%d, ocorrencia=%d, tipo=%c;\n"), i, naves_defensoras[i].powerup[j].coord.x, naves_defensoras[i].powerup[j].coord.y, naves_defensoras[i].powerup[j].dimensao.altura, naves_defensoras[i].powerup[j].dimensao.largura, naves_defensoras[i].powerup[j].duracao, naves_defensoras[i].powerup[j].velocidade, naves_defensoras[i].powerup[j].ocorrencia, naves_defensoras[i].powerup[j].tipo);
-}
-
-void mostra_bombas(Bomba *bombas) {
-	_tprintf(TEXT("\n# Mostra Bombas:\n"));
-	int i;
-	for (i = 0; i < NUM_BOMBAS; i++)
-		_tprintf(TEXT("[Bomba]: id=%d, posição=(%d,%d), velocidade=%d;\n"), i, bombas[i].coord.x, bombas[i].coord.y, bombas[i].velocidade);
-}
-
-void mostra_tiros(Tiro *tiros) {
-	_tprintf(TEXT("\n# Mostra Tiros:\n"));
-	int i;
-	for (i = 0; i < NUM_TIROS; i++)
-		_tprintf(TEXT("[Tiro]: id=%d, posição=(%d,%d), velocidade=%d;\n"), i, tiros[i].coord.x, tiros[i].coord.y, tiros[i].velocidade);
-}
-
-void mostra_powerups(PowerUp *powerups) {
-	_tprintf(TEXT("\n# Mostra PowerUps:\n"));
-	int i;
-	for (i = 0; i < NUM_POWERUP; i++)
-		_tprintf(TEXT("[Nave->PowerUps]: id=%d, posição=(%d,%d), dimensao=(%d,%d), duracao=%d, adquirido=?, velocidade=%d, ocorrencia=%d, tipo=%c;\n"), i, powerups[i].coord.x, powerups[i].coord.y, powerups[i].dimensao.altura, powerups[i].dimensao.largura, powerups[i].duracao, powerups[i].velocidade, powerups[i].ocorrencia, powerups[i].tipo);
-}
-
-void mostra_pontuacoes(Pontuacao *pontuacoes) {
-	_tprintf(TEXT("\n# Mostra Pontuações:\n"));
-	int i;
-	for (i = 0; i < NUM_TIROS; i++)
-		_tprintf(TEXT("[Tiro]: id=%d, pontos=%d, disparos=%d, invasoras=%d, vidas=%d, powerups=%d, colisões=%d;\n"), i, pontuacoes[i].pontos, pontuacoes[i].disparos, pontuacoes[i].invasoras, pontuacoes[i].vidas, pontuacoes[i].powerups, pontuacoes[i].powerups);
-}
-
-void mostra_obstaculos(Obstaculo *obstaculos) {
-	_tprintf(TEXT("\n# Mostra Obstáculos:\n"));
-	int i;
-	for (i = 0; i < NUM_NAV_INVASORAS; i++)
-		_tprintf(TEXT("[Nave]: id=%d, posição=(%d,%d), dimensao=(%d,%d), resistencia=%d;\n"), i, obstaculos[i].coord.x, obstaculos[i].coord.y, obstaculos[i].dimensao.altura, obstaculos[i].dimensao.largura, obstaculos[i].resistencia);
-}
-
-/*********** Fuções das Threads ***********/
+/**** Fuções das Threads ****/
 DWORD __stdcall naves_invasoras(void *ptr) {
 	NaveInvasora *naves_invasoras = (NaveInvasora *)ptr;
 	_tprintf(TEXT("- Funcao da Thread Naves Invasoras:\n"));
