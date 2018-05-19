@@ -127,15 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="dados.h" />
     <ClInclude Include="jogo.h" />
     <ClInclude Include="servidor.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="jogo.cpp" />
-    <ClCompile Include="servidor.cpp" />
-    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="jogo.c" />
+    <ClCompile Include="servidor.c" />
+    <ClCompile Include="utils.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

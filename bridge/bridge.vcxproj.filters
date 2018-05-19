@@ -20,7 +20,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bridge.cpp">
+    <ClCompile Include="bridge.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

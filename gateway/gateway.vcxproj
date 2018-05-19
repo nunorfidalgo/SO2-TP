@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="gateway.cpp" />
+    <ClCompile Include="gateway.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gateway.h" />

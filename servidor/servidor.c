@@ -8,29 +8,16 @@ int _tmain(int argc, TCHAR *argv[]) {
 
 	// Variáveis Jogo
 	Jogo			*jogo;
-	HANDLE			hMapMemParJogo, hEvJogo;
+	HANDLE			hMapMemParJogo;
 	LARGE_INTEGER	tam_jogo;
 	// Threads do Jogo
-	HANDLE			muNavInvs, muNavDefs, muBatalha, muEfeitos, muJogadores;
-	HANDLE			htNavInvs, htNavDefs, htBatalha, htEfeitos, htJogadores;
-	DWORD			idNavInvs, idNavDefs, idBatalha, idEfeitos, idJogadores;
-
-	// Variáveis Mensagens
-	Mensagem		*mensagens;
-	HANDLE			hMapMemParMsg, hEvMsg;
-	LARGE_INTEGER	tam_mensagem;
+	//HANDLE			muNavInvs, muNavDefs, muBatalha, muEfeitos, muJogadores;
+	//HANDLE			htNavInvs, htNavDefs, htBatalha, htEfeitos, htJogadores;
+	//DWORD			idNavInvs, idNavDefs, idBatalha, idEfeitos, idJogadores;
 
 	system("cls");
 
-	/*tam_jogo.QuadPart = sizeof(Jogo);
-	hMapMemParJogo = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_jogo.HighPart, tam_jogo.LowPart, TEXT("Jogo"));
-	if (hMapMemParJogo == NULL) {
-		_tprintf(TEXT("ERRO ao criar memoria partilhada para o Jogo: %d\n"), GetLastError());
-		exit(1);
-	}
-	jogo = (Jogo *)MapViewOfFile(hMapMemParJogo, FILE_MAP_WRITE, 0, 0, (SIZE_T)tam_jogo.QuadPart);*/
-
-	jogo = MemoriaPartilhadaJogo(hMapMemParJogo, tam_jogo);
+	jogo = MemoriaPartilhadaJogo(&hMapMemParJogo, &tam_jogo);
 
 	init_rand();
 	inicia_jogo(jogo);
@@ -42,37 +29,6 @@ int _tmain(int argc, TCHAR *argv[]) {
 	mostra_powerups(jogo->powerups);
 	mostra_pontuacoes(jogo->pontuacoes);
 	mostra_obstaculos(jogo->obstaculos);
-
-	_tprintf(TEXT("\nMensagens: \n"));
-
-	//le_msgs();
-
-	mensagens = MemoriaPartilhadaMensagens(hMapMemParMsg, tam_mensagem);
-
-	//hEvMsg = CreateEvent(NULL, true, false, TEXT("EvMensagens"));
-	//if (hEvMsg == NULL) {
-	//	_tprintf(TEXT("CreateEvent error: %d\n"), GetLastError());
-	//	exit(1);
-	//}
-
-	hEvMsg = CreateEvent(NULL, true, false, TEXT("EvMensagens"));
-	if (hEvMsg == NULL) {
-		_tprintf(TEXT("ERRO ao criar evento de Mensagens: %d\n"), GetLastError());
-		exit(1);
-	}
-
-	LeMensagens(mensagens, &hEvMsg);
-
-	CloseHandle(hEvMsg);
-	UnmapViewOfFile(mensagens);
-	CloseHandle(hMapMemParMsg);
-
-	//// Event
-	//hEvJogo = CreateEvent(NULL, true, false, TEXT("Evento"));
-	//if (hEvJogo == NULL) {
-	//	_tprintf(TEXT("ERRO ao criar evento para o jogo: %d\n"), GetLastError());
-	//	exit(1);
-	//}
 
 	// Naves Invasoras
 	//muNavInvs = CreateMutex(NULL, FALSE, NULL);

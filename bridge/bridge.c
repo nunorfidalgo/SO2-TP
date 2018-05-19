@@ -7,15 +7,13 @@ int BRIDGE_API Teste(void) {
 int BRIDGE_API UmValor(int v) {
 	return v;
 }
-
-
+// Mostrar a informação dos dados de jogo
 void BRIDGE_API mostra_naves_invasoras(NaveInvasora *naves_invasoras) {
 	_tprintf(TEXT("\n# Mostra Naves Invasoras:\n"));
 	int i;
 	for (i = 0; i < NUM_NAV_INVASORAS; i++)
 		_tprintf(TEXT("-Nave[%d]: posição=(%d,%d), dimensão=(%d,%d), resistencia=%d, velocidade=%d, tipo=%c;\n"), i, naves_invasoras[i].coord.x, naves_invasoras[i].coord.y, naves_invasoras[i].dimensao.altura, naves_invasoras[i].dimensao.largura, naves_invasoras[i].resistencia, naves_invasoras[i].velocidade, naves_invasoras[i].tipo);
 }
-
 void BRIDGE_API mostra_naves_defensoras(NaveDefensora *naves_defensoras) {
 	_tprintf(TEXT("\n# Mostra Naves Defensoras:\n"));
 	int i, j;
@@ -26,42 +24,36 @@ void BRIDGE_API mostra_naves_defensoras(NaveDefensora *naves_defensoras) {
 		}
 	}
 }
-
 void BRIDGE_API mostra_bombas(Bomba *bombas) {
 	_tprintf(TEXT("\n# Mostra Bombas:\n"));
 	int i;
 	for (i = 0; i < NUM_BOMBAS; i++)
 		_tprintf(TEXT("-Bomba[%d]: posição=(%d,%d), velocidade=%d;\n"), i, bombas[i].coord.x, bombas[i].coord.y, bombas[i].velocidade);
 }
-
 void BRIDGE_API mostra_tiros(Tiro *tiros) {
 	_tprintf(TEXT("\n# Mostra Tiros:\n"));
 	int i;
 	for (i = 0; i < NUM_TIROS; i++)
 		_tprintf(TEXT("-Tiro[%d]: posição=(%d,%d), velocidade=%d;\n"), i, tiros[i].coord.x, tiros[i].coord.y, tiros[i].velocidade);
 }
-
 void BRIDGE_API mostra_powerups(PowerUp *powerups) {
 	_tprintf(TEXT("\n# Mostra PowerUps:\n"));
 	int i;
 	for (i = 0; i < NUM_POWERUPS; i++)
 		_tprintf(TEXT("-PowerUps[%d]: posição=(%d,%d), dimensão=(%d,%d), duração=%d, adquirido=?, velocidade=%d, ocorrência=%d, tipo=%c;\n"), i, powerups[i].coord.x, powerups[i].coord.y, powerups[i].dimensao.altura, powerups[i].dimensao.largura, powerups[i].duracao, powerups[i].velocidade, powerups[i].ocorrencia, powerups[i].tipo);
 }
-
 void BRIDGE_API mostra_pontuacoes(Pontuacao *pontuacoes) {
 	_tprintf(TEXT("\n# Mostra Pontuações:\n"));
 	int i;
 	for (i = 0; i < NUM_TIROS; i++)
 		_tprintf(TEXT("-Pontuação[%d]: pontos=%d, disparos=%d, invasoras=%d, vidas=%d, powerups=%d, colisões=%d;\n"), i, pontuacoes[i].pontos, pontuacoes[i].disparos, pontuacoes[i].invasoras, pontuacoes[i].vidas, pontuacoes[i].powerups, pontuacoes[i].powerups);
 }
-
 void BRIDGE_API mostra_obstaculos(Obstaculo *obstaculos) {
 	_tprintf(TEXT("\n# Mostra Obstáculos:\n"));
 	int i;
 	for (i = 0; i < NUM_NAV_INVASORAS; i++)
 		_tprintf(TEXT("-Obstáculo[%d]: posição=(%d,%d), dimensão=(%d,%d), resistência=%d;\n"), i, obstaculos[i].coord.x, obstaculos[i].coord.y, obstaculos[i].dimensao.altura, obstaculos[i].dimensao.largura, obstaculos[i].resistencia);
 }
-
 void BRIDGE_API mostra_jogo_na_consola(Jogo *jogo) {
 	int i; // j;
 	// Naves Invasoras
@@ -100,14 +92,14 @@ void BRIDGE_API mostra_jogo_na_consola(Jogo *jogo) {
 	}
 }
 
-Jogo BRIDGE_API * MemoriaPartilhadaJogo(HANDLE	&hMapMemParJogo, LARGE_INTEGER &tam_jogo) {
-	tam_jogo.QuadPart = sizeof(Jogo);
-	hMapMemParJogo = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_jogo.HighPart, tam_jogo.LowPart, TEXT("Jogo"));
+Jogo BRIDGE_API *MemoriaPartilhadaJogo(HANDLE *hMapMemParJogo, LARGE_INTEGER *tam_jogo) {
+	tam_jogo->QuadPart = sizeof(Jogo);
+	hMapMemParJogo = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_jogo->HighPart, tam_jogo->LowPart, TEXT("Jogo"));
 	if (hMapMemParJogo == NULL) {
 		_tprintf(TEXT("ERRO ao criar memoria partilhada para o Jogo: %d\n"), GetLastError());
 		exit(1);
 	}
-	return (Jogo *)MapViewOfFile(hMapMemParJogo, FILE_MAP_ALL_ACCESS, 0, 0, (SIZE_T)tam_jogo.QuadPart);
+	return (Jogo *)MapViewOfFile(hMapMemParJogo, FILE_MAP_ALL_ACCESS, 0, 0, (SIZE_T)tam_jogo->QuadPart);
 }
 
 //Mensagem BRIDGE_API * CriaMemoriaPartilhadaMensagens(HANDLE	&hMapMemParMsg, LARGE_INTEGER &tam_mensagem) {
@@ -120,15 +112,15 @@ Jogo BRIDGE_API * MemoriaPartilhadaJogo(HANDLE	&hMapMemParJogo, LARGE_INTEGER &t
 //	return (Mensagem *)MapViewOfFile(hMapMemParMsg, FILE_MAP_WRITE, 0, 0, (SIZE_T)tam_mensagem.QuadPart);
 //}
 
-Mensagem BRIDGE_API * MemoriaPartilhadaMensagens(HANDLE	&hMapMemParMsg, LARGE_INTEGER &tam_mensagem) {
-	tam_mensagem.QuadPart = sizeof(Mensagem);
-	hMapMemParMsg = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_mensagem.HighPart, tam_mensagem.LowPart, TEXT("Mensagens"));
-	if (hMapMemParMsg == NULL) {
-		_tprintf(TEXT("ERRO ao criar memoria partilhada para Mensagens: %d\n"), GetLastError());
-		exit(1);
-	}
-	return (Mensagem *)MapViewOfFile(hMapMemParMsg, FILE_MAP_ALL_ACCESS, 0, 0, (SIZE_T)tam_mensagem.QuadPart);
-}
+//Mensagem BRIDGE_API * MemoriaPartilhadaMensagens(HANDLE	&hMapMemParMsg, LARGE_INTEGER &tam_mensagem) {
+//	tam_mensagem.QuadPart = sizeof(Mensagem);
+//	hMapMemParMsg = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_mensagem.HighPart, tam_mensagem.LowPart, TEXT("Mensagens"));
+//	if (hMapMemParMsg == NULL) {
+//		_tprintf(TEXT("ERRO ao criar memoria partilhada para Mensagens: %d\n"), GetLastError());
+//		exit(1);
+//	}
+//	return (Mensagem *)MapViewOfFile(hMapMemParMsg, FILE_MAP_ALL_ACCESS, 0, 0, (SIZE_T)tam_mensagem.QuadPart);
+//}
 
 
 void BRIDGE_API escreve_msgs(int id) {
@@ -141,7 +133,7 @@ void BRIDGE_API escreve_msgs(int id) {
 	// falta if para testar 
 	msgs = (Mensagem *)MapViewOfFile(hMap, FILE_MAP_WRITE, 0, 0, (SIZE_T)t.QuadPart);
 	// Event
-	hEvent = CreateEvent(NULL, true, false, TEXT("EvMensagens"));
+	hEvent = CreateEvent(NULL, TRUE, FALSE, TEXT("EvMensagens"));
 	if (hEvent == NULL) {
 		_tprintf(TEXT("ERRO ao criar evento de Mensagens: %d\n"), GetLastError());
 		exit(1);
@@ -173,7 +165,7 @@ void BRIDGE_API le_msgs() {
 	hMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READONLY, t.HighPart, t.LowPart, TEXT("Mensagens"));
 	msgs = (Mensagem *)MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, (SIZE_T)t.QuadPart);
 	// Event
-	hEvent = OpenEvent(SYNCHRONIZE, true, TEXT("EvMensagens"));
+	hEvent = OpenEvent(SYNCHRONIZE, TRUE, TEXT("EvMensagens"));
 	if (hEvent == NULL) {
 		_tprintf(TEXT("ERRO ao aceder ao evento de Mensagens: %d\n"), GetLastError());
 		_tprintf(TEXT("Confirme se a aplicação 'gateway' está em execução?\n"));
@@ -225,7 +217,7 @@ void gotoxy(int x, int y) {
 	SetConsoleCursorPosition(hStdout, coord);
 }
 
-extern "C" BRIDGE_API BOOL APIENTRY WINAPI DllMain(HANDLE hInstance, DWORD fdwReason, LPVOID lpvReserved) {
+BRIDGE_API BOOL APIENTRY WINAPI DllMain(HANDLE hInstance, DWORD fdwReason, LPVOID lpvReserved) {
 	switch (fdwReason) {
 	case DLL_PROCESS_ATTACH:
 		if (lpvReserved == NULL)
