@@ -6,9 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{897DEDF7-53A1-4C4E-87C5-0E25E20C6D95}"
 	ProjectSection(SolutionItems) = preProject
 		dados.h = dados.h
+		iniciar_jogo.bat = iniciar_jogo.bat
 		notas.txt = notas.txt
 		README.md = README.md
-		start_apps.bat = start_apps.bat
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bridge", "bridge\bridge.vcxproj", "{D0496E07-1EA8-4F7F-8246-0ED1C6E2C336}"

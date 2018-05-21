@@ -1,14 +1,16 @@
 #pragma once
 
 // inicia as vareaveis de jogo
-void inicia_jogo(Jogo *jogo);
-void inicia_naves_invasoras(NaveInvasora *naves_invasoras);
-void inicia_naves_defensoras(NaveDefensora *naves_defensoras);
-void inicia_bombas(Bomba *bombas);
-void inicia_tiros(Tiro *tiros);
-void inicia_powerups(PowerUp *powerups);
+void inicia_jogo(Jogo *jogo, BOOL debug);
+int inicia_naves_invasoras(NaveInvasora *naves_invasoras, Posicao *posicoes_iniciais, int pos, BOOL debug);
+int inicia_naves_defensoras(NaveDefensora *naves_defensoras, Posicao *posicoes_iniciais, int pos, BOOL debug);
+int inicia_bombas(Bomba *bombas, Posicao *posicoes_iniciais, int pos, BOOL debug);
+int inicia_tiros(Tiro *tiros, Posicao *posicoes_iniciais, int pos, BOOL debug);
+int inicia_powerups(PowerUp *powerups, Posicao *posicoes_iniciais, int pos, BOOL debug);
+int inicia_obstaculos(Obstaculo *obstaculos, Posicao *posicoes_iniciais, int pos, BOOL debug);
 void inicia_pontuacoes(Pontuacao *pontuacoes);
-void inicia_obstaculos(Obstaculo *obstaculos);
+
+void mostra_posições_iniciais(Posicao *posicoes_iniciais);
 
 /*********** Fuções das Threads ***********/
 DWORD __stdcall naves_invasoras(void *ptr);
