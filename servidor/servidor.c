@@ -21,8 +21,8 @@ int _tmain(int argc, TCHAR *argv[]) {
 	//system("cls");
 
 	if (argc > 1 && _tcscmp(argv[1], TEXT("?")) == 0) {
-		_tprintf(TEXT("argumentos:\n"));
-		_tprintf(TEXT("%s debug -> mostra os dados de jogo e mensagens...\n"), argv[0]);
+		_tprintf(TEXT("%s ? -> mostra esta ajuda;\n"), argv[0]);
+		_tprintf(TEXT("%s debug -> mostra os dados de jogo e mensagens;\n"), argv[0]);
 		exit(0);
 	}
 
@@ -44,6 +44,13 @@ int _tmain(int argc, TCHAR *argv[]) {
 	}
 	else {
 		inicia_jogo(jogo, FALSE);
+		mostra_naves_invasoras(jogo->naves_invasoras);
+		mostra_naves_defensoras(jogo->naves_defensoras);
+		mostra_bombas(jogo->bombas);
+		mostra_tiros(jogo->tiros);
+		mostra_powerups(jogo->powerups);
+		mostra_obstaculos(jogo->obstaculos);
+		mostra_pontuacoes(jogo->pontuacoes);
 	}
 
 	_tprintf(TEXT("\n* sizeof(jogo): %d bytes\n"), sizeof(Jogo));
