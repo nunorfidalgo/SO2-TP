@@ -1,4 +1,47 @@
 #include "servidor.h"
+#include "../bridge/bridge.h"
+#include "utils.h"
+#include "jogo.h"
+
+TCHAR NomeSemaforoPodeEscrever[] = TEXT("Semáforo Pode Escrever");
+TCHAR NomeSemaforoPodeLer[] = TEXT("Semáforo Pode Ler");
+
+HANDLE SemEscreveJogo;
+HANDLE SemLerJogo;
+
+HANDLE MutexJogo;
+
+DWORD __stdcall naves_invasoras(void *ptr) {
+	NaveInvasora *naves_invasoras = (NaveInvasora *)ptr;
+	_tprintf(TEXT("- Funcao da Thread Naves Invasoras:\n"));
+	/*Sleep(10000);
+	_tprintf(TEXT("Dormi 10 sec... fazer as naves inv mexer!!\n"));*/
+
+	// gotoxy( x     , y     );
+	// gotoxy(COLUNAS, LINHAS);
+
+	int i;
+	float xrand, yrand;
+	while (1) {
+
+		WaitForSingleObject(SemEscreveJogo, INFINITE);
+		WaitForSingleObject(MutexJogo, INFINITE);
+
+		for (i = 0; i < NUM_NAV_INVASORAS; i++) {
+			xrand = rand_01();
+			yrand = rand_01();
+			if (xrand < 0.5 && (naves_invasoras[i].coord.x > 0 || naves_invasoras[i].coord.x < COLUNAS))
+				naves_invasoras[i].coord.x++;
+			if (yrand < 0.5 && (naves_invasoras[i].coord.y > 0 || naves_invasoras[i].coord.y < POS_FINAL_NAV_DEF_Y))
+				naves_invasoras[i].coord.y++;
+		}
+
+		ReleaseMutex(MutexJogo);
+		Sleep(VEL_UM_SEC);
+		ReleaseSemaphore(SemLerJogo, 1, NULL);
+	}
+	return 0;
+}
 
 int _tmain(int argc, TCHAR *argv[]) {
 	setlocale(LC_CTYPE, "Portuguese");
@@ -18,7 +61,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 	//HANDLE			muNavInvs, muNavDefs, muBatalha, muEfeitos;
 	//HANDLE			htNavInvs, htNavDefs, htBatalha, htEfeitos;
 	//DWORD			idNavInvs, idNavDefs, idBatalha, idEfeitos;
-	//system("cls");
+
 
 	if (argc > 1 && _tcscmp(argv[1], TEXT("?")) == 0) {
 		_tprintf(TEXT("%s ? -> mostra esta ajuda;\n"), argv[0]);
@@ -29,6 +72,29 @@ int _tmain(int argc, TCHAR *argv[]) {
 	_tprintf(TEXT("\n********************************************************************************\n"));
 
 	jogo = CriaMemoriaPartilhadaJogo(&hMapMemParJogo, &tam_jogo);
+
+	MutexJogo = CreateMutex(NULL, TRUE, "Jogo");
+	if (MutexJogo == NULL) {
+		_tprintf(TEXT("CreateMutex error: %d\n"), GetLastError());
+		return 1;
+	}
+
+	// verificar se ja existe shm
+	if (GetLastError() != ERROR_ALREADY_EXISTS) {
+		// colocar IN a zero...
+		jogo->In = 0;
+		jogo->Out = 0;
+		// (Mutex ou) restaurar valor do semaforo PodeEscrever(+10)... ou seja release de 10 unidades, alterar na criacao para 0 ate 10
+		/*ReleaseSemaphore(PodeEscrever, 10, NULL);*/
+		ReleaseMutex(MutexJogo);
+	}
+
+	SemEscreveJogo = CreateSemaphore(NULL, SEMAFORO_JOGO_NUM_ACCOES, SEMAFORO_JOGO_NUM_ACCOES, NomeSemaforoPodeEscrever);
+	SemLerJogo = CreateSemaphore(NULL, 0, SEMAFORO_JOGO_NUM_ACCOES, NomeSemaforoPodeLer);
+	if (SemEscreveJogo == NULL || SemLerJogo == NULL) {
+		_tprintf(TEXT("[Erro]Criação de objectos do Windows(%d)\n"), GetLastError());
+		return -1;
+	}
 
 	init_rand();
 

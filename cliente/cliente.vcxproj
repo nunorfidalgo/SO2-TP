@@ -122,9 +122,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="cliente.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="cliente.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

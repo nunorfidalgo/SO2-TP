@@ -7,8 +7,15 @@
 #include <stdio.h>
 
 // Velocidade
-#define MEIO_SEC 500
-#define UM_SEC 1000
+#define VEL_100MS 100
+#define VEL_200MS 200
+#define VEL_300MS 300
+#define VEL_400MS 400
+#define VEL_MEIO_SEC 500
+#define VEL_UM_SEC 1000
+
+// Semaforo de Jogo, cada posisção controla o array associado;
+#define SEMAFORO_JOGO_NUM_ACCOES 7
 
 // tamanho padrão da linha de comandos do windows, mais tarde mudar para algo maior, como 500x500 ou 1000x1000
 #define COLUNAS 80
@@ -116,6 +123,8 @@ typedef struct {
 
 typedef struct {
 	unsigned int	nivel; // ???? será assim para designar o nível / como fazer o incremento de dificuldade ????
+	unsigned int	In;
+	unsigned int	Out;
 	NaveInvasora	naves_invasoras[NUM_NAV_INVASORAS];
 	NaveDefensora	naves_defensoras[NUM_NAV_DEFENSORAS];
 	Bomba			bombas[NUM_BOMBAS];
