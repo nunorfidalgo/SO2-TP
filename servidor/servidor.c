@@ -27,7 +27,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 	}
 
 	_tprintf(TEXT("\n********************************************************************************\n"));
-
+	//Criar Mutex para gerir memória dinâmica
 	jogo = CriaMemoriaPartilhadaJogo(&hMapMemParJogo, &tam_jogo);
 
 	init_rand();

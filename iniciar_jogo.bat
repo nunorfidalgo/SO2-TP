@@ -31,7 +31,7 @@ if "%1"=="x64" if "%2"=="debug" goto x64_debug
 	goto :eof
 
 :x64_debug
-	start x64\Debug\servirdor.exe debug
+	start x64\Debug\servidor.exe debug
 	timeout /t 1
 	start x64\Debug\gateway.exe debug
 	goto :eof
