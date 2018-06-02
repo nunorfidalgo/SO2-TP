@@ -13,7 +13,7 @@ void inicia_pontuacoes(Pontuacao *pontuacoes);
 void mostra_posições_iniciais(Posicao *posicoes_iniciais);
 
 /*********** Fuções das Threads ***********/
-DWORD __stdcall naves_invasoras(void *ptr);
+//DWORD __stdcall naves_invasoras(void *ptr);
 DWORD __stdcall naves_defensoras(void *ptr);
 DWORD __stdcall batalha(void *ptr);
 DWORD __stdcall efeitos(void *ptr);

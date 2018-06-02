@@ -1,4 +1,10 @@
-#include "gateway.h"
+#include <windows.h>
+#include <tchar.h>
+#include <io.h>
+#include <fcntl.h>
+#include <stdio.h>
+
+#include "../bridge/bridge.h"
 
 int _tmain(int argc, TCHAR *argv[]) {
 #ifdef UNICODE
@@ -11,23 +17,47 @@ int _tmain(int argc, TCHAR *argv[]) {
 	HANDLE			hMapMemParJogo;
 	LARGE_INTEGER	tam_jogo;
 
-	/*HANDLE			muJogadores;
-	HANDLE			htJogadores;
-	DWORD			idJogadores;*/
+	HANDLE			MutexJogo;
+	HANDLE			SemLerJogo, SemEscreveJogo;
 
-	system("cls");
-	//_tprintf(TEXT("iniciou...\n"));
+	TCHAR NomeSemaforoPodeEscrever[] = TEXT("Semáforo Pode Escrever");
+	TCHAR NomeSemaforoPodeLer[] = TEXT("Semáforo Pode Ler");
+
+	//HANDLE			MutexJogadores;
+	//HANDLE			ThreatJogadores;
+	//DWORD			IdJogadores;
+
+
+	MutexJogo = CreateMutex(NULL, FALSE, "MutexJogo");
+	if (MutexJogo == NULL) {
+		_tprintf(TEXT("MutexJogo error: %d\n"), GetLastError());
+		exit(1);
+	}
 
 	jogo = AcedeMemoriaPartilhadaJogo(&hMapMemParJogo, &tam_jogo); // -mudar isto para o gateway nao estar a correr sem o servidor !!!!!
+
+	SemEscreveJogo = CreateSemaphore(NULL, SEMAFORO_JOGO_NUM_ACCOES, SEMAFORO_JOGO_NUM_ACCOES, NomeSemaforoPodeEscrever);
+	SemLerJogo = CreateSemaphore(NULL, 0, SEMAFORO_JOGO_NUM_ACCOES, NomeSemaforoPodeLer);
+
+	if (SemEscreveJogo == NULL || SemLerJogo == NULL) {
+		_tprintf(TEXT("[Erro]Criação de objectos do Windows(%d)\n"), GetLastError());
+		exit(1);
+	}
 
 	if (argc > 1) {
 		if (_tcscmp(argv[1], TEXT("debug")) == 0) {
 			while (1) {
+				WaitForSingleObject(SemLerJogo, INFINITE);
+				WaitForSingleObject(MutexJogo, INFINITE);
+
 				system("cls");
 				mostra_tabuleiro_jogo();
 				mostra_jogo_na_consola(jogo);
-				Sleep(MEIO_SEC);
+				Sleep(VEL_MEIO_SEC);
 				gotoxy(20, 25); // prompt
+
+				ReleaseMutex(MutexJogo);
+				ReleaseSemaphore(SemEscreveJogo, 1, NULL);
 			}
 		}
 		if (_tcscmp(argv[1], TEXT("?")) == 0) {

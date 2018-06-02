@@ -1,3 +1,4 @@
+#include "servidor.h"
 #include "../dados.h"
 #include "jogo.h"
 #include "utils.h"
@@ -227,32 +228,7 @@ void mostra_posições_iniciais(Posicao *posicoes_iniciais) {
 }
 
 /**** Fuções das Threads ****/
-DWORD __stdcall naves_invasoras(void *ptr) {
-	NaveInvasora *naves_invasoras = (NaveInvasora *)ptr;
-	_tprintf(TEXT("- Funcao da Thread Naves Invasoras:\n"));
-	/*Sleep(10000);
-	_tprintf(TEXT("Dormi 10 sec... fazer as naves inv mexer!!\n"));*/
 
-	// gotoxy( x     , y     );
-	// gotoxy(COLUNAS, LINHAS);
-
-	int i;
-	float xrand, yrand;
-	while (1) {
-
-		for (i = 0; i < NUM_NAV_INVASORAS; i++) {
-			xrand = rand_01();
-			yrand = rand_01();
-			if (xrand < 0.5 && (naves_invasoras[i].coord.x > 0 || naves_invasoras[i].coord.x < COLUNAS))
-				naves_invasoras[i].coord.x++;
-			if (yrand < 0.5 && (naves_invasoras[i].coord.y > 0 || naves_invasoras[i].coord.y < POS_FINAL_NAV_DEF_Y))
-				naves_invasoras[i].coord.y++;
-		}
-
-		Sleep(UM_SEC);
-	}
-	return 0;
-}
 
 DWORD __stdcall naves_defensoras(void *ptr) {
 	NaveDefensora *naves_defensoras = (NaveDefensora *)ptr;

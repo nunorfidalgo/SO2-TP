@@ -129,9 +129,6 @@
   <ItemGroup>
     <ClCompile Include="gateway.c" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="gateway.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

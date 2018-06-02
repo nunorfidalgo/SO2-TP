@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../bridge/bridge.h"
-#include "../dados.h"
-#include "utils.h"
-#include "jogo.h"
+#include <windows.h>
+#include <tchar.h>
+#include <io.h>
+#include <fcntl.h>
+#include <stdio.h>
+

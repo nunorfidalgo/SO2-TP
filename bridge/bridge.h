@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <tchar.h>
+
 #include "../dados.h"
 
 #ifdef BRIDGE_EXPORTS

@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="servidor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="jogo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="servidor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

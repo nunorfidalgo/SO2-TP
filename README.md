@@ -53,16 +53,18 @@ O jogo terá naves invasores e defensoras, tiros, bombas e powerups, assim como 
 	- [x] modo debug em ambas as arquiteturas;
 
 ## Modulo "Bridge""
-- [ ] Código inicial da bridge(DDL):
-	- [x] Livraria DLL;
-	- [ ] Funções para zonas de memoria partilhada;
-		- [ ] Dados de jogo;
-		- [ ] Mensagens;
-	- [ ] Funções para zona de dados do jogo;
-    - [ ] Funções para zona de mensagens;
+- [x] Código inicial da bridge(DDL):
+- [x] Livraria DLL;
+- [x] Corrigida para C em vez de estar a usar o extern "C";
+- [ ] Funções para zonas de memoria partilhada;
+	- [ ] Dados de jogo;
+	- [ ] Mensagens;
+- [ ] Funções para zona de dados do jogo;
+- [ ] Funções para zona de mensagens;
 
 ## Modulo "Servidor"
 - [x] Código inicial da servidor(consola);
+- [x] Projecto corrigido para C;
 - [x] Interligação DLL implícita;
 - [ ] Estrutura de dados; -> Em progresso!!;
 	- [x] Estrutura de Jogo;
@@ -74,6 +76,7 @@ O jogo terá naves invasores e defensoras, tiros, bombas e powerups, assim como 
 - [x] Modo debug, activar por argumentos;
 - [x] Mostrar os dados, inicialemente em consola, mais tarde mudar para a GUI (especie de "debug");
 - [x] Criação de zona de memória partilhada para o jogo (não usar variáveis globais);
+	- [ ] Mutex de proteção da mémoria partilhada;
 - [x] Suporte a threads;
 	- [x] Threads naves invasoras;
 		- [ ] movimento inicial das naves
@@ -92,30 +95,33 @@ O jogo terá naves invasores e defensoras, tiros, bombas e powerups, assim como 
 
 ## Modulo "Gateway"
 - [x] Criação do projecto gateway(consola):
-	- [x] Interligação DLL implícita;
-	- [x] App de consola;
-	- [x] Modo debug, activar por argumentos;
-		- [x] mostra os posições iniciais de novo jogo, dimensões da consola (com recurso a gotoxy());
-    - [x] Suporte a memória partilhada e verificação se o servidor está em execução;
-		- [ ] Falta verificação de quando o servidor termina;
-	- [ ] Suporte a named pipes;
-	- [ ] Suporte a threads;
-		- [ ] nova ligação;
-		- [ ] novo jogador;
-	- [ ] Suporte a envio de login, nome de utiliazador(jogador);
-	- [ ] Suporte ao input do jogador;
- 	- [ ] Suporte a mensagens;
+- [x] Projecto corrigido para C;
+- [x] Interligação DLL implícita;
+- [x] App de consola;
+- [x] Modo debug, activar por argumentos;
+	- [x] mostra os posições iniciais de novo jogo, dimensões da consola (com recurso a gotoxy());
+- [x] Suporte a memória partilhada e verificação se o servidor está em execução;
+	- [ ] Falta verificação de quando o servidor termina;
+	- [ ] Mutex de proteção da mémoria partilhada;
+- [ ] Suporte a threads;
+	- [ ] nova ligação;
+	- [ ] novo jogador;
+- [ ] Suporte a named pipes;
+- [ ] Suporte a envio de login, nome de utiliazador(jogador);
+- [ ] Suporte ao input do jogador;
+- [ ] Suporte a mensagens;
     
 ## Modulo "Cliente"
 - [x] Código inicial da cliente(consola);
-	- [ ] Suporte a named pipes;
-	- [ ] Suporte a threads;
-		- [ ] leitura;
-		- [ ] escrita;
-	- [ ] Recolhe as teclas do jogador e envia-as ao jogo;
-	- [ ] Enviar e receber mensagens;
-	- [ ] Primeiro teste em modo de consola (uma vez que a matéria de GUI gráfica ainda não foi lecionada nas aulas);
-	- [ ] GUI, interface com o utilizador;
+- [x] Projecto corrigido para C;
+- [ ] Suporte a named pipes;
+- [ ] Suporte a threads;
+	- [ ] leitura;
+	- [ ] escrita;
+- [ ] Recolhe as teclas do jogador e envia-as ao jogo;
+- [ ] Enviar e receber mensagens;
+- [ ] Primeiro teste em modo de consola (uma vez que a matéria de GUI gráfica ainda não foi lecionada nas aulas);
+- [ ] GUI, interface com o utilizador;
 
 # Como jogar?
 * Executar o sctipt "inicar_jogo.bat" de forma a iniciar o "servidor" e "gateway";
