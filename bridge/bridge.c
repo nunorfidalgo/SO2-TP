@@ -74,46 +74,95 @@ void BRIDGE_API mostra_jogo_na_consola(Jogo *jogo) {
 		gotoxy(jogo->naves_defensoras[i].coord.x, jogo->naves_defensoras[i].coord.y);
 		_tprintf(TEXT("d"));
 	}
-	// Naves Bombas
-	for (i = 0; i < NUM_BOMBAS; i++) {
-		gotoxy(jogo->bombas[i].coord.x, jogo->bombas[i].coord.y);
-		_tprintf(TEXT("b"));
-	}
-	// Naves Tiros
+	//// Bombas
+	//for (i = 0; i < NUM_BOMBAS; i++) {
+	//	gotoxy(jogo->bombas[i].coord.x, jogo->bombas[i].coord.y);
+	//	_tprintf(TEXT("8"));
+	//}
+	// Tiros
 	for (i = 0; i < NUM_TIROS; i++) {
-		gotoxy(jogo->tiros[i].coord.x, jogo->tiros[i].coord.y);
-		_tprintf(TEXT("t"));
+		if (jogo->tiros[i].tipo != '0') {
+			gotoxy(jogo->tiros[i].coord.x, jogo->tiros[i].coord.y);
+			_tprintf(TEXT("."));
+		}
 	}
-	// Naves PowerUp
-	for (i = 0; i < NUM_POWERUPS; i++) {
-		gotoxy(jogo->powerups[i].coord.x, jogo->powerups[i].coord.y);
-		_tprintf(TEXT("p"));
-	}
-	// Naves Obstáculo
-	for (i = 0; i < NUM_OBSTACULOS; i++) {
-		gotoxy(jogo->obstaculos[i].coord.x, jogo->obstaculos[i].coord.y);
-		_tprintf(TEXT("o"));
-	}
+	//// PowerUps
+	//for (i = 0; i < NUM_POWERUPS; i++) {
+	//	gotoxy(jogo->powerups[i].coord.x, jogo->powerups[i].coord.y);
+	//	_tprintf(TEXT("*"));
+	//}
+	//// Obstáculos
+	//for (i = 0; i < NUM_OBSTACULOS; i++) {
+	//	gotoxy(jogo->obstaculos[i].coord.x, jogo->obstaculos[i].coord.y);
+	//	_tprintf(TEXT("#"));
+	//}
 }
 
 void BRIDGE_API mostra_tabuleiro_jogo() {
 	int i;
-	for (i = 0; i <= COLUNAS; i++) {
-		gotoxy(i, 5);
+
+	//gotoxy(0, 0); _tprintf(TEXT("."));
+	//gotoxy(1, 0); _tprintf(TEXT("."));
+	//gotoxy(2, 0); _tprintf(TEXT("."));
+	//gotoxy(3, 0); _tprintf(TEXT("."));
+	//gotoxy(4, 0); _tprintf(TEXT("."));
+
+	for (i = 0; i < COLUNAS; i++) {
+		gotoxy(i, POS_Y_INICIAL);
 		_tprintf(TEXT("-"));
 	}
-	for (i = 0; i <= COLUNAS; i++) {
-		gotoxy(i, 18);
+
+	//gotoxy(0, 5); _tprintf(TEXT("*"));
+	//gotoxy(1, 5); _tprintf(TEXT("*"));
+	//gotoxy(2, 5); _tprintf(TEXT("*"));
+	//gotoxy(3, 5); _tprintf(TEXT("*"));
+	//gotoxy(4, 5); _tprintf(TEXT("*"));
+
+	for (i = 0; i < COLUNAS; i++) {
+		gotoxy(i, POS_Y_LIMITE_NAV_DEF_MOV);
 		_tprintf(TEXT("-"));
 	}
-	for (i = 0; i <= COLUNAS; i++) {
-		gotoxy(i, 21);
+
+	for (i = 0; i < COLUNAS; i++) {
+		gotoxy(i, POS_FIM_TAB_Y);
 		_tprintf(TEXT("-"));
 	}
-	gotoxy(0, 21);
+
+	for (i = 0; i < COLUNAS; i++) {
+		gotoxy(i, POS_FIM_Y);
+		_tprintf(TEXT("-"));
+	}
+
+	for (i = 0; i < LINHAS + 2; i++) {
+		gotoxy(COLUNAS, i);
+		_tprintf(TEXT("|"));
+	}
+
+	gotoxy(POS_ZERO, POS_FIM_TAB_Y);
 	_tprintf(TEXT("Mensagens:\n"));
-	gotoxy(0, 25);
+	gotoxy(POS_ZERO, POS_ENVIAR_MSGS);
 	_tprintf(TEXT("Enviar mensagem(m): \n"));
+
+	gotoxy(82, 0);
+	_tprintf(TEXT("* Phoenix (multiplayer)"));
+	gotoxy(82, 2);
+	_tprintf(TEXT("* Teclas:"));
+	gotoxy(82, 3);
+	_tprintf(TEXT("- Setas CIMA, BAIXO, DIR, ESQ:"));
+	gotoxy(82, 4);
+	_tprintf(TEXT("\t- movimento nave defensora"));
+	gotoxy(82, 5);
+	_tprintf(TEXT("- SPACE: dispara 'tiro(s)'"));
+	gotoxy(82, 6);
+	_tprintf(TEXT("- ENTER: dispara 'bomba'"));
+	gotoxy(82, 7);
+	_tprintf(TEXT("- M: escreve 'mensagem'"));
+	gotoxy(82, 8);
+	_tprintf(TEXT("- ESC: sair"));
+
+	gotoxy(82, 10);
+	_tprintf(TEXT("* Pontuações:"));
+
 }
 
 Jogo BRIDGE_API *CriaMemoriaPartilhadaJogo(HANDLE *hMapMemParJogo, LARGE_INTEGER *tam_jogo) {

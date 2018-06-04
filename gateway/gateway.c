@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "../bridge/bridge.h"
+#include "../utils.h"
 
 int _tmain(int argc, TCHAR *argv[]) {
 #ifdef UNICODE
@@ -26,6 +27,8 @@ int _tmain(int argc, TCHAR *argv[]) {
 	//HANDLE			MutexJogadores;
 	//HANDLE			ThreatJogadores;
 	//DWORD			IdJogadores;
+
+	TCHAR input, i, j, pos_tiros = 0;
 
 
 	MutexJogo = CreateMutex(NULL, FALSE, "MutexJogo");
@@ -53,8 +56,52 @@ int _tmain(int argc, TCHAR *argv[]) {
 				system("cls");
 				mostra_tabuleiro_jogo();
 				mostra_jogo_na_consola(jogo);
-				Sleep(VEL_MEIO_SEC);
+
+				//Sleep(VEL_MEIO_SEC);
 				gotoxy(20, 25); // prompt
+
+
+				//_tprintf(TEXT("[Erro](%d)\n"), GetLastError());
+				if (jogo == NULL)
+					_tprintf(TEXT("[Erro](%d)\n"), GetLastError());
+
+				input = _gettch();
+				input = toupper(input);
+				if (input == 80) // CIMA
+					for (i = 0; i < NUM_NAV_DEFENSORAS; i++)
+						jogo->naves_defensoras[i].coord.y++;
+				if (input == 72) // BAIXO
+					for (i = 0; i < NUM_NAV_DEFENSORAS; i++)
+						jogo->naves_defensoras[i].coord.y--;
+				if (input == 77) // DIR
+					for (i = 0; i < NUM_NAV_DEFENSORAS; i++)
+						jogo->naves_defensoras[i].coord.x++;
+				if (input == 75) // ESQ
+					for (i = 0; i < NUM_NAV_DEFENSORAS; i++)
+						jogo->naves_defensoras[i].coord.x--;
+				if (input == 27)
+					exit(1);
+				if (input == 32) {
+					for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
+						for (j = pos_tiros; j < NUM_TIROS; j++) {
+							jogo->tiros[j].tipo = 'd';
+							jogo->tiros[j].coord.x = jogo->naves_defensoras[i].coord.x;
+							jogo->tiros[j].coord.y = jogo->naves_defensoras[i].coord.y;
+							jogo->tiros[i].velocidade = random_l_h(1, 10);
+							pos_tiros++;
+							break;
+						}
+					}
+				}
+
+				//if (input == '')
+				//if (input == '')
+				//if (input == '')
+				//if (input == '')
+
+				_tprintf(TEXT("%d"), input);
+
+				//_flushall();
 
 				ReleaseMutex(MutexJogo);
 				ReleaseSemaphore(SemEscreveJogo, 1, NULL);

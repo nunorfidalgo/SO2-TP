@@ -21,24 +21,23 @@
 #define COLUNAS 80
 #define LINHAS 25
 
-#define POS_INICIAL_NAV_INV_X 0
-#define POS_FINAL_NAV_INV_Y 5
-#define LIMITEY_NAV_DEFENSORAS 0.2 // colcoar esta % em uso
+#define POS_ZERO 0
+#define POS_X_INICIAL 0
+#define POS_Y_INICIAL 5
+#define POS_FIM_TAB_Y 22 // chat de msgs
+#define POS_ENVIAR_MSGS 25
+#define POS_FIM_Y 26
+#define POS_Y_LIMITE_NAV_DEF_MOV (int)(POS_FIM_TAB_Y / 1.2)
 
-#define POS_INICIAL_NAV_DEF_X 19
-#define POS_FINAL_NAV_DEF_Y 20
-
-#define POS_INICIAL_TAB_X 6
-#define POS_FINAL_TAB_Y 18
 
 // número maximo a mostrar no campo de batalha
-#define NUM_NAV_INVASORAS 10
-#define NUM_NAV_DEFENSORAS 2 // equivalente ao num de clientes, um cliente por cada nave defensora
-#define NUM_BOMBAS 10
-#define NUM_TIROS 10
+#define NUM_NAV_INVASORAS 3
+#define NUM_NAV_DEFENSORAS 1 // equivalente ao num de clientes, um cliente por cada nave defensora
+#define NUM_BOMBAS 3 // (NUM_NAV_INVASORAS * 
+#define NUM_TIROS 5 // ((NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS ) * 4) 
 #define NUM_POWERUPS 2
 #define NUM_POWERUPS_NAV_DEF 2
-#define NUM_OBSTACULOS 5
+#define NUM_OBSTACULOS 20
 #define TMP_POS (NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS + NUM_BOMBAS + NUM_TIROS + NUM_POWERUPS + NUM_OBSTACULOS)
 
 // Mensagens
@@ -72,6 +71,8 @@ typedef struct {
 // Elemento de jogo - Tiro
 typedef struct {
 	unsigned int	velocidade;
+	// tipo de tiro, invasor ou defensor!!!!!!!!!!!!!!!!!!!!!!!!
+	char			tipo;
 	Posicao			coord;
 } Tiro;
 

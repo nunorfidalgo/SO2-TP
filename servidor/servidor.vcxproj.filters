@@ -18,21 +18,21 @@
     <ClInclude Include="jogo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
+    <ClInclude Include="servidor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="servidor.h">
+    <ClInclude Include="..\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="utils.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="servidor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="jogo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
