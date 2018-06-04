@@ -38,7 +38,7 @@ void BRIDGE_API mostra_tiros(Tiro *tiros) {
 	_tprintf(TEXT("\n# Mostra Tiros:\n"));
 	int i;
 	for (i = 0; i < NUM_TIROS; i++)
-		_tprintf(TEXT(" - Tiro[%d]: posição=(%02d,%02d), velocidade=%d;\n"), i, tiros[i].coord.x, tiros[i].coord.y, tiros[i].velocidade);
+		_tprintf(TEXT(" - Tiro[%d]: posição=(%02d,%02d), tipo=%c, velocidade=%d;\n"), i, tiros[i].coord.x, tiros[i].coord.y, tiros[i].tipo, tiros[i].velocidade);
 }
 
 void BRIDGE_API mostra_powerups(PowerUp *powerups) {
@@ -162,7 +162,6 @@ void BRIDGE_API mostra_tabuleiro_jogo() {
 
 	gotoxy(82, 10);
 	_tprintf(TEXT("* Pontuações:"));
-
 }
 
 Jogo BRIDGE_API *CriaMemoriaPartilhadaJogo(HANDLE *hMapMemParJogo, LARGE_INTEGER *tam_jogo) {

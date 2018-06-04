@@ -21,20 +21,19 @@
 #define COLUNAS 80
 #define LINHAS 25
 
+// posições da consola
 #define POS_ZERO 0
-#define POS_X_INICIAL 0
 #define POS_Y_INICIAL 5
 #define POS_FIM_TAB_Y 22 // chat de msgs
 #define POS_ENVIAR_MSGS 25
 #define POS_FIM_Y 26
-#define POS_Y_LIMITE_NAV_DEF_MOV (int)(POS_FIM_TAB_Y / 1.2)
-
+#define POS_Y_LIMITE_NAV_DEF_MOV (int)(POS_FIM_TAB_Y / 1.2) // 20 %
 
 // número maximo a mostrar no campo de batalha
 #define NUM_NAV_INVASORAS 3
-#define NUM_NAV_DEFENSORAS 1 // equivalente ao num de clientes, um cliente por cada nave defensora
+#define NUM_NAV_DEFENSORAS 2 // equivalente ao num de clientes, um cliente por cada nave defensora
 #define NUM_BOMBAS 3 // (NUM_NAV_INVASORAS * 
-#define NUM_TIROS 5 // ((NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS ) * 4) 
+#define NUM_TIROS 6 // ((NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS ) * 4) 
 #define NUM_POWERUPS 2
 #define NUM_POWERUPS_NAV_DEF 2
 #define NUM_OBSTACULOS 20
@@ -71,7 +70,6 @@ typedef struct {
 // Elemento de jogo - Tiro
 typedef struct {
 	unsigned int	velocidade;
-	// tipo de tiro, invasor ou defensor!!!!!!!!!!!!!!!!!!!!!!!!
 	char			tipo;
 	Posicao			coord;
 } Tiro;
@@ -105,7 +103,7 @@ typedef struct {
 	PowerUp			powerup[NUM_POWERUPS_NAV_DEF];
 } NaveDefensora;
 
-// Elemento de jogo - Pontuacao de cada jogador
+// Elemento de jogo - Pontuacao de cada jogador - rever estes valores
 typedef struct {
 	unsigned int	pontos;
 	unsigned int	disparos;

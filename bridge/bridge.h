@@ -32,5 +32,4 @@ Jogo BRIDGE_API *AcedeMemoriaPartilhadaJogo(HANDLE *hMapMemParJogo, LARGE_INTEGE
 // Mensagens
 //Mensagem BRIDGE_API * MemoriaPartilhadaMensagens(HANDLE	hMapMemParMsg, LARGE_INTEGER tam_mensagem);
 
-
 void BRIDGE_API gotoxy(int x, int y);
