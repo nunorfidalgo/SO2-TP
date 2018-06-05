@@ -11,19 +11,6 @@
 #define BRIDGE_API __declspec(dllimport)
 #endif
 
-// Mostrar a informação dos dados de jogo
-void BRIDGE_API mostra_naves_invasoras(NaveInvasora *naves_invasoras);
-void BRIDGE_API mostra_naves_defensoras(NaveDefensora *naves_defensoras);
-void BRIDGE_API mostra_bombas(Bomba *bombas);
-void BRIDGE_API mostra_tiros(Tiro *tiros);
-void BRIDGE_API mostra_powerups(PowerUp *powerups);
-void BRIDGE_API mostra_obstaculos(Obstaculo *obstaculos);
-void BRIDGE_API mostra_pontuacoes(Pontuacao *pontuacoes);
-
-//void BRIDGE_API mostra_jogo_na_consola(Jogo *jogo);
-//void BRIDGE_API mostra_tabuleiro_jogo();
-void BRIDGE_API mostra_jogo(Jogo *jogo);
-
 Jogo BRIDGE_API *CriaMemoriaPartilhadaJogo(HANDLE *hMapMemParJogo, LARGE_INTEGER *tam_jogo);
 Jogo BRIDGE_API *AcedeMemoriaPartilhadaJogo(HANDLE *hMapMemParJogo, LARGE_INTEGER *tam_jogo);
 

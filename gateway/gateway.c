@@ -10,7 +10,10 @@
 // funções das Threads
 DWORD __stdcall jogadores(void *ptr);
 
+void mostra_jogo_consola(Jogo *jogo);
+
 // Variáveis globais
+BOOL	DEBUG = FALSE;
 HANDLE	MutexJogo;
 HANDLE	SemLerJogo, SemEscreveJogo;
 TCHAR	NomeSemaforoPodeEscrever[] = TEXT("Escrever no semáforo");
@@ -46,6 +49,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 		exit(1);
 	}
 
+	//if (argc > 1 && _tcscmp(argv[1], TEXT("debug")) == 0) DEBUG = TRUE;
 	//if (argc > 1) {
 	//	if (_tcscmp(argv[1], TEXT("debug")) == 0) {
 	//		
@@ -88,9 +92,7 @@ DWORD __stdcall jogadores(void *ptr) {
 		WaitForSingleObject(MutexJogo, INFINITE);
 
 		system("cls");
-		/*mostra_tabuleiro_jogo();
-		mostra_jogo_na_consola(jogo);*/
-		mostra_jogo(jogo);
+		mostra_jogo_consola(jogo);
 
 		//Sleep(VEL_MEIO_SEC);
 		gotoxy(17, 25); // prompt
@@ -131,8 +133,6 @@ DWORD __stdcall jogadores(void *ptr) {
 			}
 		}
 
-
-
 		if (input == 32) { // Tiro naves defensoras
 			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
 				for (j = 0; j < NUM_TIROS; j++) {
@@ -160,4 +160,105 @@ DWORD __stdcall jogadores(void *ptr) {
 		//ReleaseSemaphore(SemEscreveJogo, 1, NULL);
 	}
 	return 0;
+}
+
+void mostra_jogo_consola(Jogo *jogo) {
+	int i;
+	// Limites jogo
+	for (i = 0; i < COLUNAS; i++) {
+		gotoxy(i, POS_Y_INICIAL);
+		_tprintf(TEXT("-"));
+	}
+	for (i = 0; i < COLUNAS; i++) {
+		gotoxy(i, POS_Y_LIMITE_NAV_DEF_MOV);
+		_tprintf(TEXT("-"));
+	}
+	for (i = 0; i < COLUNAS; i++) {
+		gotoxy(i, POS_FIM_TAB_Y);
+		_tprintf(TEXT("-"));
+	}
+	for (i = 0; i < COLUNAS; i++) {
+		gotoxy(i, POS_FIM_Y);
+		_tprintf(TEXT("-"));
+	}
+	for (i = 0; i < LINHAS + 2; i++) {
+		gotoxy(COLUNAS, i);
+		_tprintf(TEXT("|"));
+	}
+	gotoxy(POS_ZERO, POS_FIM_TAB_Y);
+	_tprintf(TEXT("Mensagens:\n"));
+	gotoxy(POS_ZERO, POS_ENVIAR_MSGS);
+	_tprintf(TEXT("Enviar mensagem: \n"));
+	gotoxy(82, 0);
+	_tprintf(TEXT("* Phoenix (multiplayer)"));
+	gotoxy(82, 2);
+	_tprintf(TEXT("* Teclas:"));
+	gotoxy(82, 3);
+	_tprintf(TEXT(" - Setas CIMA, BAIXO, DIR, ESQ:"));
+	gotoxy(82, 4);
+	_tprintf(TEXT("  - movimento nave defensora"));
+	gotoxy(82, 5);
+	_tprintf(TEXT(" - SPACE: dispara 'tiro(s)'"));
+	gotoxy(82, 6);
+	_tprintf(TEXT(" - ENTER: dispara 'bomba'"));
+	gotoxy(82, 7);
+	_tprintf(TEXT(" - M: escreve 'mensagem'"));
+	gotoxy(82, 8);
+	_tprintf(TEXT(" - ESC: sair"));
+	gotoxy(82, 10);
+	_tprintf(TEXT("* Pontuações:"));
+	gotoxy(82, 11);
+	_tprintf(TEXT(" - Nav Inv: %d"), jogo->pontuacoes->nav_inv);
+	gotoxy(82, 12);
+	_tprintf(TEXT(" - Nav Def: %d"), jogo->pontuacoes->nav_def);
+	gotoxy(82, 13);
+	_tprintf(TEXT(" - Bombas: %d"), jogo->pontuacoes->bombas);
+	gotoxy(82, 14);
+	_tprintf(TEXT(" - Tiros: %d"), jogo->pontuacoes->tiros);
+	gotoxy(82, 15);
+	_tprintf(TEXT(" - PowerUps: %d"), jogo->pontuacoes->powerups);
+	gotoxy(82, 16);
+	_tprintf(TEXT(" - Obstáculos: %d"), jogo->pontuacoes->obstaculos);
+
+	// Naves Invasoras
+	for (i = 0; i < NUM_NAV_INVASORAS; i++) {
+		/*if (jogo->naves_invasoras[i].coord.y >= POS_Y_LIMITE_NAV_DEF_MOV) {
+			gotoxy(30, 12);
+			_tprintf(TEXT("FIM!! Invasores vencem!"));
+			_gettch();
+		}*/
+		if (jogo->naves_invasoras[i].resistencia != 0) {
+			gotoxy(jogo->naves_invasoras[i].coord.x, jogo->naves_invasoras[i].coord.y);
+			_tprintf(TEXT("i"));
+		}
+	}
+	// Naves Defensoras
+	for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
+		gotoxy(jogo->naves_defensoras[i].coord.x, jogo->naves_defensoras[i].coord.y);
+		_tprintf(TEXT("d"));
+	}
+	//// Bombas
+	//for (i = 0; i < NUM_BOMBAS; i++) {
+	//	gotoxy(jogo->bombas[i].coord.x, jogo->bombas[i].coord.y);
+	//	_tprintf(TEXT("8"));
+	//}
+	// Tiros
+	for (i = 0; i < NUM_TIROS; i++) {
+		if (jogo->tiros[i].velocidade != 0) {
+			gotoxy(jogo->tiros[i].coord.x, jogo->tiros[i].coord.y);
+			_tprintf(TEXT("."));
+		}
+	}
+	//// PowerUps
+	//for (i = 0; i < NUM_POWERUPS; i++) {
+	//	gotoxy(jogo->powerups[i].coord.x, jogo->powerups[i].coord.y);
+	//	_tprintf(TEXT("*"));
+	//}
+	// Obstáculos
+	for (i = 0; i < NUM_OBSTACULOS; i++) {
+		if (jogo->obstaculos[i].resistencia != 0) {
+			gotoxy(jogo->obstaculos[i].coord.x, jogo->obstaculos[i].coord.y);
+			_tprintf(TEXT("#"));
+		}
+	}
 }

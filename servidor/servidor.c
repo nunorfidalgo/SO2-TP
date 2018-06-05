@@ -3,12 +3,8 @@
 #include "../utils.h"
 #include "jogo.h"
 
-// funções das Threads
-DWORD __stdcall naves_invasoras(void *ptr);
-DWORD __stdcall batalha(void *ptr);
-DWORD __stdcall efeitos(void *ptr);
-
-// Variáveis globais
+// Variáveis globais (definidas no servidor.h)
+BOOL	DEBUG = FALSE;
 TCHAR	NomeSemaforoPodeEscrever[] = TEXT("Escrever no semáforo");
 TCHAR	NomeSemaforoPodeLer[] = TEXT("Ler do semáforo");
 HANDLE	SemEscreveJogo;
@@ -24,7 +20,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 
 	init_rand(); // inicializa o gerador de números aleatorios
 
-	// Variáveis Jogo locais
+	// Variáveis locais
 	Jogo			*jogo;
 	HANDLE			hMapMemParJogo;
 	LARGE_INTEGER	tam_jogo;
@@ -67,19 +63,15 @@ int _tmain(int argc, TCHAR *argv[]) {
 		return -1;
 	}
 
-	if (argc > 1 && _tcscmp(argv[1], TEXT("debug")) == 0) {
-		inicia_jogo(jogo, TRUE);
-		mostra_naves_invasoras(jogo->naves_invasoras);
-		mostra_naves_defensoras(jogo->naves_defensoras);
-		mostra_bombas(jogo->bombas);
-		mostra_tiros(jogo->tiros);
-		mostra_powerups(jogo->powerups);
-		mostra_obstaculos(jogo->obstaculos);
-		mostra_pontuacoes(jogo->pontuacoes);
-	}
-	else {
-		inicia_jogo(jogo, FALSE);
-	}
+	if (argc > 1 && _tcscmp(argv[1], TEXT("debug")) == 0) DEBUG = TRUE;
+	inicia_jogo(jogo);
+	// if (DEBUG == TRUE) mostra_naves_invasoras(jogo->naves_invasoras);
+	// if (DEBUG == TRUE) mostra_naves_defensoras(jogo->naves_defensoras);
+	// if (DEBUG == TRUE) mostra_bombas(jogo->bombas);
+	// if (DEBUG == TRUE) mostra_tiros(jogo->tiros);
+	// if (DEBUG == TRUE) mostra_powerups(jogo->powerups);
+	// if (DEBUG == TRUE) mostra_obstaculos(jogo->obstaculos);
+	// if (DEBUG == TRUE) mostra_pontuacoes(jogo->pontuacoes);
 
 	_tprintf(TEXT("\n* sizeof(jogo): %d bytes\n"), sizeof(Jogo));
 	_tprintf(TEXT("* Novo jogo pronto, a aguardar gateway...\n"));
@@ -102,14 +94,14 @@ int _tmain(int argc, TCHAR *argv[]) {
 		exit(1);
 	}
 
-	//htEfeitos = CreateThread(NULL, 0, efeitos, (LPVOID)jogo, 0, &idEfeitos);
-	//if (htEfeitos != NULL) {
-	//	_tprintf(TEXT("- Thread[id=%d] Efeitos;\n"), idEfeitos);
-	//}
-	//else {
-	//	_tprintf(TEXT("## Erro ao criar Thread de Efeitos! (código=%d)\n"), GetLastError());
-	//	exit(1);
-	//}
+	htEfeitos = CreateThread(NULL, 0, efeitos, (LPVOID)jogo, 0, &idEfeitos);
+	if (htEfeitos != NULL) {
+		_tprintf(TEXT("- Thread[id=%d] Efeitos;\n"), idEfeitos);
+	}
+	else {
+		_tprintf(TEXT("## Erro ao criar Thread de Efeitos! (código=%d)\n"), GetLastError());
+		exit(1);
+	}
 
 	// sair com ESC
 	input = _gettch();
@@ -128,125 +120,5 @@ int _tmain(int argc, TCHAR *argv[]) {
 	CloseHandle(hMapMemParJogo);
 
 	_tprintf(TEXT("\nFim do jogo!!\n\n"));
-	return 0;
-}
-
-/**** Fuções das Threads ****/
-
-DWORD __stdcall naves_invasoras(void *ptr) {
-	_tprintf(TEXT("- Funcao da Thread Naves Invasoras:\n"));
-	Jogo *jogo = (Jogo *)ptr;
-
-	///*Sleep(10000);
-	//_tprintf(TEXT("Dormi 10 sec... fazer as naves inv mexer!!\n"));*/
-
-	int i, counter = 0;
-	float xrand, yrand;
-
-	while (1) {
-		_tprintf(TEXT("\nThread Naves Invasoras-----------------------------------------------------------------------------------------\n"));
-		//WaitForSingleObject(SemEscreveJogo, INFINITE);
-		WaitForSingleObject(MutexJogo, INFINITE);
-
-		for (i = 0; i < NUM_NAV_INVASORAS; i++) {
-			xrand = rand_01();
-			yrand = rand_01();
-			counter++;
-			_tprintf(TEXT("xrand=%0.2f, yrand=%0.2f, counter=%d;\n"), xrand, yrand, counter);
-
-			// descer
-			if (yrand < 0.3) {
-				if (jogo->naves_invasoras[i].coord.y < POS_Y_LIMITE_NAV_DEF_MOV) { // POS_FIM_TAB_Y
-					jogo->naves_invasoras[i].coord.y++;
-					_tprintf(TEXT("nave desce!!"));
-				}
-				if (jogo->naves_invasoras[i].coord.y >= POS_Y_LIMITE_NAV_DEF_MOV) {
-					_tprintf(TEXT("\n\nFIM!! Invasores vencem!\n"));
-					_gettch();
-					exit(1);
-				}
-			}
-			// andar para os lados
-			if (xrand > 0.5) {
-				if (jogo->naves_invasoras[i].coord.x < COLUNAS - 1) {
-					jogo->naves_invasoras[i].coord.x++;
-					_tprintf(TEXT("nave dir!!"));
-				}
-			}
-			else {
-				if (jogo->naves_invasoras[i].coord.x > POS_ZERO) {
-					jogo->naves_invasoras[i].coord.x--;
-					_tprintf(TEXT("nave esq!!"));
-				}
-			}
-		}
-		mostra_naves_invasoras(jogo->naves_invasoras);
-
-		ReleaseMutex(MutexJogo);
-		Sleep(VEL_200MS);
-		//Sleep(VEL_UM_SEC);
-		//Sleep(VEL_TRINTA_SEC);
-		//ReleaseSemaphore(SemLerJogo, 1, NULL);
-	}
-	return 0;
-}
-
-DWORD __stdcall batalha(void *ptr) {
-	_tprintf(TEXT("- Funcao da Thread Batalha:\n"));
-	Jogo *jogo = (Jogo *)ptr;
-	int i;
-	while (1) {
-		//WaitForSingleObject(SemEscreveJogo, INFINITE);
-		WaitForSingleObject(MutexJogo, INFINITE);
-
-		// verificar as naves inv/def para terminar o jogo
-
-		// bombas
-		for (i = 0; i < NUM_BOMBAS; i++) {
-			if (jogo->bombas[i].velocidade != 0) {
-				jogo->bombas[i].coord.y--;
-				//jogo->pontuacoes->bombas++;
-				if (jogo->bombas[i].coord.y >= POS_FIM_TAB_Y) { // bomba desaparece
-					jogo->bombas[i].velocidade = 0;
-					jogo->bombas[i].coord.y = 0;
-					jogo->bombas[i].coord.x = 0;
-				}
-			}
-		}
-
-		// tiros
-		for (i = 0; i < NUM_TIROS; i++) {
-			if (jogo->tiros[i].velocidade != 0) {
-				jogo->tiros[i].coord.y--;
-				if (jogo->tiros[i].coord.y <= POS_ZERO) { // tiro desaparece
-					jogo->tiros[i].velocidade = 0;
-					jogo->tiros[i].coord.y = 0;
-					jogo->tiros[i].coord.x = 0;
-				}
-			}
-		}
-
-		/*_tprintf(TEXT("\nThread Batalha-----------------------------------------------------------------------------------------\n"));
-		_tprintf(TEXT("POS_Y_LIMITE_NAV_DEF_MOV: %d\n"), POS_Y_LIMITE_NAV_DEF_MOV);*/
-		//mostra_naves_defensoras(jogo->naves_defensoras);
-		//mostra_bombas(jogo->bombas);
-		//mostra_tiros(jogo->tiros);
-		//mostra_powerups(jogo->powerups);
-		//mostra_obstaculos(jogo->obstaculos);
-
-		ReleaseMutex(MutexJogo);
-		Sleep(VEL_200MS);
-		//ReleaseSemaphore(SemLerJogo, 1, NULL);
-	}
-	return 0;
-}
-
-// thread para gerir os efeitos do powerups
-DWORD __stdcall efeitos(void *ptr) {
-	Jogo *jogo = (Jogo *)ptr;
-	_tprintf(TEXT("- Funcao da Thread Efeitos:\n"));
-	_tprintf(TEXT("\nThread Efeitos-----------------------------------------------------------------------------------------\n"));
-	// gerir obstaculos... os tiros tiram a resistencia
-	// gerir powerups
 	return 0;
 }

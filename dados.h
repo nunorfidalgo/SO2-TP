@@ -41,19 +41,23 @@
 // número maximo a mostrar no campo de batalha
 #define NUM_NAV_INVASORAS 2
 #define NUM_NAV_DEFENSORAS 1 // equivalente ao num de clientes, um cliente por cada nave defensora
-#define NUM_BOMBAS 20 // (NUM_NAV_INVASORAS * 
-#define NUM_TIROS 10 // ((NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS ) * 4) 
+#define NUM_BOMBAS NUM_NAV_INVASORAS * 10
+#define NUM_TIROS NUM_NAV_DEFENSORAS * 20 
 #define NUM_POWERUPS 4
 #define NUM_POWERUPS_NAV_DEF 1
 #define NUM_OBSTACULOS 10
 #define TMP_POS (NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS + NUM_BOMBAS + NUM_TIROS + NUM_POWERUPS + NUM_OBSTACULOS)
+
+// Probabilidades do movimento das naves invasoras
+#define PROB_DESCER 0.2
+#define PROB_LADOS 0.5
 
 // Mensagens
 #define TEXTO 160
 
 typedef struct {
 	unsigned int	idJogador;
-	TCHAR			texto[TEXTO];
+	TCHAR			msg[TEXTO];
 	//HANDLE			hEvMsg;
 } Mensagem;
 
