@@ -6,13 +6,22 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-// Velocidade
+// Velocidades
 #define VEL_100MS 100
 #define VEL_200MS 200
 #define VEL_300MS 300
 #define VEL_400MS 400
+#define VEL_500MS 500
 #define VEL_MEIO_SEC 500
+#define VEL_600MS 600
+#define VEL_700MS 700
+#define VEL_800MS 800
+#define VEL_900MS 900
+#define VEL_1000MS 1000
 #define VEL_UM_SEC 1000
+#define VEL_DOIS_SEC 2000
+#define VEL_DEZ_SEC 10000
+#define VEL_TRINTA_SEC 30000
 
 // Semaforo de Jogo, cada posisção controla o array associado;
 #define SEMAFORO_JOGO_NUM_ACCOES 7
@@ -30,13 +39,13 @@
 #define POS_Y_LIMITE_NAV_DEF_MOV (int)(POS_FIM_TAB_Y / 1.2) // 20 %
 
 // número maximo a mostrar no campo de batalha
-#define NUM_NAV_INVASORAS 3
-#define NUM_NAV_DEFENSORAS 2 // equivalente ao num de clientes, um cliente por cada nave defensora
-#define NUM_BOMBAS 3 // (NUM_NAV_INVASORAS * 
-#define NUM_TIROS 6 // ((NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS ) * 4) 
-#define NUM_POWERUPS 2
-#define NUM_POWERUPS_NAV_DEF 2
-#define NUM_OBSTACULOS 20
+#define NUM_NAV_INVASORAS 2
+#define NUM_NAV_DEFENSORAS 1 // equivalente ao num de clientes, um cliente por cada nave defensora
+#define NUM_BOMBAS 20 // (NUM_NAV_INVASORAS * 
+#define NUM_TIROS 10 // ((NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS ) * 4) 
+#define NUM_POWERUPS 4
+#define NUM_POWERUPS_NAV_DEF 1
+#define NUM_OBSTACULOS 10
 #define TMP_POS (NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS + NUM_BOMBAS + NUM_TIROS + NUM_POWERUPS + NUM_OBSTACULOS)
 
 // Mensagens
@@ -70,7 +79,6 @@ typedef struct {
 // Elemento de jogo - Tiro
 typedef struct {
 	unsigned int	velocidade;
-	char			tipo;
 	Posicao			coord;
 } Tiro;
 
@@ -84,6 +92,13 @@ typedef struct {
 	Dimensao		dimensao;
 	Posicao			coord;
 } PowerUp;
+
+// Elemento de jogo - Extra
+typedef struct {
+	unsigned int	resistencia;
+	Posicao			coord;
+	Dimensao		dimensao;
+} Obstaculo;
 
 // Elemento de jogo - Nave Invasora
 typedef struct {
@@ -105,20 +120,14 @@ typedef struct {
 
 // Elemento de jogo - Pontuacao de cada jogador - rever estes valores
 typedef struct {
-	unsigned int	pontos;
-	unsigned int	disparos;
-	unsigned int	invasoras;
-	unsigned int	vidas;
+	unsigned int	nav_inv;
+	unsigned int	nav_def;
+	unsigned int	tiros;
+	unsigned int	bombas;
 	unsigned int	powerups;
-	unsigned int	colisoes;
+	unsigned int	obstaculos;
+	//unsigned int	pontos; // ?? de cada nav_def
 } Pontuacao;
-
-// Elemento de jogo - Extra
-typedef struct {
-	unsigned int	resistencia;
-	Posicao			coord;
-	Dimensao		dimensao;
-} Obstaculo;
 
 typedef struct {
 	unsigned int	nivel; // ???? será assim para designar o nível / como fazer o incremento de dificuldade ????

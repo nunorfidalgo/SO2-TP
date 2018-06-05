@@ -58,7 +58,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 	//else {
 	//	_tprintf(TEXT("Ligação estabelecida ao servidor... a aguardar algo??\n"));
 	//}
-	
+
 	// Threat Jogadores
 	ThreatJogadores = CreateThread(NULL, 0, jogadores, (LPVOID)jogo, 0, &IdJogadores); // jogo->clientes add cliente to dados
 	if (ThreatJogadores != NULL) {
@@ -84,23 +84,26 @@ DWORD __stdcall jogadores(void *ptr) {
 	Jogo *jogo = (Jogo *)ptr;
 
 	while (1) {
-		WaitForSingleObject(SemLerJogo, INFINITE);
+		//WaitForSingleObject(SemLerJogo, INFINITE);
 		WaitForSingleObject(MutexJogo, INFINITE);
 
 		system("cls");
-		mostra_tabuleiro_jogo();
-		mostra_jogo_na_consola(jogo);
+		/*mostra_tabuleiro_jogo();
+		mostra_jogo_na_consola(jogo);*/
+		mostra_jogo(jogo);
 
 		//Sleep(VEL_MEIO_SEC);
-		gotoxy(20, 25); // prompt
-
+		gotoxy(17, 25); // prompt
 
 		//_tprintf(TEXT("[Erro](%d)\n"), GetLastError());
-		if (jogo == NULL)
-			_tprintf(TEXT("[Erro](%d)\n"), GetLastError());
+		/*if (jogo == NULL)
+			_tprintf(TEXT("[Erro](%d)\n"), GetLastError());*/
 
 		input = _gettch();
 		input = toupper(input);
+
+		if (input == 27) // sair com ESC
+			exit(1);
 
 		// movimento da naves defensoras
 		if (input == 80) { // CIMA
@@ -109,11 +112,11 @@ DWORD __stdcall jogadores(void *ptr) {
 					jogo->naves_defensoras[i].coord.y++;
 			}
 		}
-		if (input == 72){ // BAIXO
+		if (input == 72) { // BAIXO
 			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
-				if (jogo->naves_defensoras[i].coord.y > POS_Y_LIMITE_NAV_DEF_MOV) 
+				if (jogo->naves_defensoras[i].coord.y > POS_Y_LIMITE_NAV_DEF_MOV)
 					jogo->naves_defensoras[i].coord.y--;
-				}
+			}
 		}
 		if (input == 77) { // DIR
 			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
@@ -123,26 +126,25 @@ DWORD __stdcall jogadores(void *ptr) {
 		}
 		if (input == 75) { // ESQ
 			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
-				if (jogo->naves_defensoras[i].coord.x > POS_ZERO ) 
+				if (jogo->naves_defensoras[i].coord.x > POS_ZERO)
 					jogo->naves_defensoras[i].coord.x--;
 			}
 		}
 
-		if (input == 27) // sair com ESC
-			exit(1);
+
 
 		if (input == 32) { // Tiro naves defensoras
 			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
 				for (j = 0; j < NUM_TIROS; j++) {
-					if (jogo->tiros[j].tipo == '0') {
+					if (jogo->tiros[j].velocidade == 0) {
 						pos_tiros = j;
 						break;
 					}
 				}
-				jogo->tiros[j].tipo = 'd';
 				jogo->tiros[pos_tiros].coord.x = jogo->naves_defensoras[i].coord.x;
 				jogo->tiros[pos_tiros].coord.y = jogo->naves_defensoras[i].coord.y;
 				jogo->tiros[pos_tiros].velocidade = random_l_h(1, 10);
+				jogo->pontuacoes->tiros++;
 			}
 		}
 
@@ -155,7 +157,7 @@ DWORD __stdcall jogadores(void *ptr) {
 		_flushall();
 
 		ReleaseMutex(MutexJogo);
-		ReleaseSemaphore(SemEscreveJogo, 1, NULL);
+		//ReleaseSemaphore(SemEscreveJogo, 1, NULL);
 	}
 	return 0;
 }
