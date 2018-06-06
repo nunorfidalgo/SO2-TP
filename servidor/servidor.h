@@ -14,6 +14,7 @@ extern TCHAR	NomeSemaforoPodeLer[];
 extern HANDLE	SemEscreveJogo;
 extern HANDLE	SemLerJogo;
 extern HANDLE	MutexJogo;
+extern int		pos_bombas;
 
 typedef struct { // apenas usado na inicialização 
 	Posicao	nav_inv[NUM_NAV_INVASORAS];

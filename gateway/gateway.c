@@ -95,8 +95,9 @@ DWORD __stdcall jogadores(void *ptr) {
 		/*if (jogo == NULL)
 			_tprintf(TEXT("[Erro](%d)\n"), GetLastError());*/
 
-		input = _gettch();
-		input = toupper(input);
+			/*input = _gettch();
+			input = toupper(input);*/
+		input = 0;
 
 		if (input == 27) // sair com ESC
 			exit(1);
@@ -151,6 +152,7 @@ DWORD __stdcall jogadores(void *ptr) {
 		_flushall();
 
 		ReleaseMutex(MutexJogo);
+		Sleep(VEL_UM_SEC);
 		//ReleaseSemaphore(SemEscreveJogo, 1, NULL);
 	}
 	return 0;
@@ -238,11 +240,13 @@ void mostra_jogo_consola(Jogo *jogo) {
 		gotoxy(jogo->naves_defensoras[i].coord.x, jogo->naves_defensoras[i].coord.y);
 		_tprintf(TEXT("d"));
 	}
-	//// Bombas
-	//for (i = 0; i < NUM_BOMBAS; i++) {
-	//	gotoxy(jogo->bombas[i].coord.x, jogo->bombas[i].coord.y);
-	//	_tprintf(TEXT("8"));
-	//}
+	// Bombas
+	for (i = 0; i < NUM_BOMBAS; i++) {
+		if (jogo->bombas[i].velocidade != 0) {
+			gotoxy(jogo->bombas[i].coord.x, jogo->bombas[i].coord.y);
+			_tprintf(TEXT("8"));
+		}
+	}
 	// Tiros
 	for (i = 0; i < NUM_TIROS; i++) {
 		if (jogo->tiros[i].velocidade != 0) {

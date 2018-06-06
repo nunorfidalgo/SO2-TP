@@ -20,6 +20,7 @@
 #define VEL_1000MS 1000
 #define VEL_UM_SEC 1000
 #define VEL_DOIS_SEC 2000
+#define VEL_CINCO_SEC 5000
 #define VEL_DEZ_SEC 10000
 #define VEL_TRINTA_SEC 30000
 
@@ -40,24 +41,27 @@
 
 // número maximo a mostrar no campo de batalha
 #define NUM_NAV_INVASORAS 10
-//#define NUM_NAV_INV_BASICAS 4
-//#define NUM_NAV_INV_ESQUIVA 2
-// outras
-#define NUM_NAV_DEFENSORAS 1 // equivalente ao num de clientes, um cliente por cada nave defensora
-#define NUM_BOMBAS NUM_NAV_INVASORAS * 10
-#define NUM_TIROS NUM_NAV_DEFENSORAS * 20
+#define NUM_NAV_DEFENSORAS 1 // equivalente ao número de clientes, um cliente por cada nave defensora
+#define MAX_BOMBAS 4
+#define NUM_BOMBAS (NUM_NAV_INVASORAS*MAX_BOMBAS)
+#define MAX_TIROS 15
+#define NUM_TIROS (NUM_NAV_DEFENSORAS*MAX_TIROS)
 #define NUM_POWERUPS 4
 #define NUM_POWERUPS_NAV_DEF 1
 #define NUM_OBSTACULOS 10
-#define TMP_POS (NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS + NUM_BOMBAS + NUM_TIROS + NUM_POWERUPS + NUM_OBSTACULOS)
+//#define TMP_POS (NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS + NUM_BOMBAS + NUM_TIROS + NUM_POWERUPS + NUM_OBSTACULOS)
+
+// taxa de disparo das naves invasoras, cada movimento desconta e quando chega a zero dispara bomba
+#define TAXA_DISPARO_NAV_BASICAS 20 
+#define TAXA_DISPARO_NAV_ESQUIVAS  8// 40 %
+#define TAXA_DISPARO_NAV_INVASIVAS 6
 
 // Probabilidades
-#define PROB_NAV_INV_BASICA 0.8
-#define PROB_NAV_INV_ESQUIVA 0.6
-#define PROB_NAV_INV_INVASIVA 0.4
+#define PROB_NAV_INV_ESQUIVA 0.4
+#define PROB_NAV_INV_INVASIVA 0.2
 #define PROB_DESCER 0.2
 #define PROB_LADOS 0.5
-#define PROB_BOMBA 0.3
+//#define PROB_BOMBA 0.3
 #define PROB_POWERUP 0.1
 
 // Mensagens

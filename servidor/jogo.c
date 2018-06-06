@@ -3,6 +3,9 @@
 #include "../utils.h"
 #include "jogo.h"
 
+// variavel global -> ver em servidor.h
+int pos_bombas = 0;
+
 /**** Função de inicialização dos dados do jogo  ***********************************************/
 void inicia_jogo(Jogo *jogo) {
 	_tprintf(TEXT("* Novo Jogo:\n"));
@@ -38,16 +41,15 @@ void inicia_naves_invasoras(NaveInvasora *naves_invasoras, PosicoesIniciais *pos
 			naves_invasoras[i].direcao = '0';
 			naves_invasoras[i].resistencia = 8; // random_l_h(4, 10);
 			naves_invasoras[i].velocidade = 200; // random_l_h(1, 10) * 100; // em MS
-			naves_invasoras[i].taxa_disparo = 8;
+			naves_invasoras[i].taxa_disparo = TAXA_DISPARO_NAV_INVASIVAS;
 			pontuacoes->nav_inv_i++;
 		}
 		else if (nrand <= PROB_NAV_INV_ESQUIVA) {
-
 			naves_invasoras[i].tipo = 'e';
 			naves_invasoras[i].direcao = '0';
 			naves_invasoras[i].resistencia = 3; // random_l_h(4, 10);
 			naves_invasoras[i].velocidade = 800; // random_l_h(1, 10) * 100; // em MS
-			naves_invasoras[i].taxa_disparo = 4; // -40 %
+			naves_invasoras[i].taxa_disparo = TAXA_DISPARO_NAV_ESQUIVAS;
 			pontuacoes->nav_inv_e++;
 		}
 		else {
@@ -55,11 +57,11 @@ void inicia_naves_invasoras(NaveInvasora *naves_invasoras, PosicoesIniciais *pos
 			naves_invasoras[i].direcao = 'd'; // d->direita, e->esquerda
 			naves_invasoras[i].resistencia = 1; // random_l_h(4, 10);
 			naves_invasoras[i].velocidade = 1000; // random_l_h(1, 10) * 100; // em MS
-			naves_invasoras[i].taxa_disparo = 10;
+			naves_invasoras[i].taxa_disparo = TAXA_DISPARO_NAV_BASICAS;
 			pontuacoes->nav_inv_b++;
 		}
 		do {
-			for (j = 0; j < TMP_POS; j++) {
+			for (j = 0; j < NUM_NAV_INVASORAS; j++) {
 				xrand = random_l_h(POS_ZERO, COLUNAS);
 				yrand = random_l_h(POS_ZERO, POS_Y_INICIAL);
 				if (xrand != pos_init->nav_inv[j].x && yrand != pos_init->nav_inv[j].y)
@@ -83,7 +85,7 @@ void inicia_naves_defensoras(NaveDefensora *naves_defensoras, PosicoesIniciais *
 		naves_defensoras[i].vidas = random_l_h(1, 3);
 		naves_defensoras[i].velocidade = random_l_h(1, 9);
 		do {
-			for (u = 0; u < TMP_POS; u++) {
+			for (u = 0; u < NUM_NAV_DEFENSORAS; u++) {
 				xrand = random_l_h(POS_ZERO, COLUNAS);
 				yrand = random_l_h(POS_Y_LIMITE_NAV_DEF_MOV, POS_FIM_TAB_Y - 1);
 				if (xrand != pos_init->nav_def[u].x && yrand != pos_init->nav_def[u].y)
@@ -157,7 +159,7 @@ void inicia_obstaculos(Obstaculo *obstaculos, PosicoesIniciais *pos_init) {
 		obstaculos[i].dimensao.altura = random_l_h(1, 6);
 		obstaculos[i].dimensao.largura = random_l_h(1, 4);
 		do {
-			for (j = 0; j < TMP_POS; j++) {
+			for (j = 0; j < NUM_OBSTACULOS; j++) {
 				xrand = random_l_h(POS_Y_INICIAL, COLUNAS);
 				yrand = random_l_h(POS_Y_INICIAL, POS_Y_LIMITE_NAV_DEF_MOV - 1);
 				if (xrand != pos_init->obstaculos[j].x && yrand != pos_init->obstaculos[j].y)
@@ -190,7 +192,8 @@ void mostra_naves_invasoras(NaveInvasora *naves_invasoras) {
 	_tprintf(TEXT("\n# Mostra Naves Invasoras:\n"));
 	int i;
 	for (i = 0; i < NUM_NAV_INVASORAS; i++)
-		_tprintf(TEXT(" - Nave[%d]: posição=(%2d,%2d), dimensão=(%2d,%2d), resistencia=%d, velocidade=%d, tipo=%c;\n"), i, naves_invasoras[i].coord.x, naves_invasoras[i].coord.y, naves_invasoras[i].dimensao.altura, naves_invasoras[i].dimensao.largura, naves_invasoras[i].resistencia, naves_invasoras[i].velocidade, naves_invasoras[i].tipo);
+		_tprintf(TEXT(" - Nave[%d]: posição=(%2d,%2d), tipo=%c, taxa_disparo=%d, dimensão=(%2d,%2d), resistencia=%d, velocidade=%d, direcao=%c;\n"),
+			i, naves_invasoras[i].coord.x, naves_invasoras[i].coord.y, naves_invasoras[i].tipo, naves_invasoras[i].taxa_disparo, naves_invasoras[i].dimensao.altura, naves_invasoras[i].dimensao.largura, naves_invasoras[i].resistencia, naves_invasoras[i].velocidade, naves_invasoras[i].direcao);
 }
 
 void mostra_naves_defensoras(NaveDefensora *naves_defensoras) {
@@ -267,7 +270,7 @@ DWORD __stdcall naves_invasoras(void *ptr) {
 	Jogo *jogo = (Jogo *)ptr;
 	int counter = 0;
 	while (1) {
-		Sleep(VEL_500MS);
+
 		//if (DEBUG == TRUE) _tprintf(TEXT("\nThread Naves Invasoras-----------------------------------------------------------------------------------------\n"));
 		//WaitForSingleObject(SemEscreveJogo, INFINITE);
 		WaitForSingleObject(MutexJogo, INFINITE);
@@ -277,13 +280,13 @@ DWORD __stdcall naves_invasoras(void *ptr) {
 
 		mover_naves_invasoras(jogo);
 
-		//if (DEBUG == TRUE) mostra_naves_invasoras(jogo->naves_invasoras);
+		if (DEBUG == TRUE) mostra_naves_invasoras(jogo->naves_invasoras);
 
 		ReleaseMutex(MutexJogo);
 
 		//Sleep(VEL_200MS);
-		// O sleep mudei para cima!!!!
-		//Sleep(VEL_TRINTA_SEC);
+		//Sleep(VEL_500MS);
+		Sleep(VEL_UM_SEC);
 
 		//ReleaseSemaphore(SemLerJogo, 1, NULL);
 	}
@@ -294,7 +297,7 @@ DWORD __stdcall batalha(void *ptr) {
 	if (DEBUG == TRUE) _tprintf(TEXT("- Funcao da Thread Batalha:\n"));
 	Jogo *jogo = (Jogo *)ptr;
 	while (1) {
-		Sleep(VEL_100MS);
+
 		// if (DEBUG == TRUE) _tprintf(TEXT("\nThread Batalha-----------------------------------------------------------------------------------------\n"));
 
 		//WaitForSingleObject(SemEscreveJogo, INFINITE);
@@ -310,15 +313,14 @@ DWORD __stdcall batalha(void *ptr) {
 
 		//if (DEBUG == TRUE) _tprintf(TEXT("POS_Y_LIMITE_NAV_DEF_MOV: %d\n"), POS_Y_LIMITE_NAV_DEF_MOV);
 		// if (DEBUG == TRUE) mostra_naves_defensoras(jogo->naves_defensoras);
-		// if (DEBUG == TRUE) mostra_bombas(jogo->bombas);
+		if (DEBUG == TRUE) mostra_bombas(jogo->bombas);
 		// if (DEBUG == TRUE) mostra_tiros(jogo->tiros);
 		//if (DEBUG == TRUE) mostra_obstaculos(jogo->obstaculos);
 
 		ReleaseMutex(MutexJogo);
 
-		/*Sleep(VEL_300MS);*/
-		// O sleep mudei para cima!!!!
-		//Sleep(VEL_UM_SEC);
+		//Sleep(VEL_500MS);
+		Sleep(VEL_UM_SEC);
 
 		//ReleaseSemaphore(SemLerJogo, 1, NULL);
 	}
@@ -353,7 +355,7 @@ DWORD __stdcall efeitos(void *ptr) {
 
 /**** Funções de batalha ***********************************************/
 void mover_naves_invasoras(Jogo *jogo) {
-	int i;
+	int i, j;
 	float xrand, yrand;
 	for (i = 0; i < NUM_NAV_INVASORAS; i++) {
 
@@ -363,7 +365,7 @@ void mover_naves_invasoras(Jogo *jogo) {
 		exit(1);
 		}*/
 
-		// tipo basico
+		// nave invasora basica
 		if (jogo->naves_invasoras[i].tipo == 'b') {
 			// andar para a direita
 			if (jogo->naves_invasoras[i].direcao == 'd') {
@@ -386,7 +388,7 @@ void mover_naves_invasoras(Jogo *jogo) {
 			}
 		}
 
-		// tipo esquivo
+		// nave invasora esquiva
 		if (jogo->naves_invasoras[i].tipo == 'e') {
 			xrand = rand_01();
 			yrand = rand_01();
@@ -418,7 +420,7 @@ void mover_naves_invasoras(Jogo *jogo) {
 			}
 		}
 
-		// tipo invasivo
+		// nave invasora invasiva
 		if (jogo->naves_invasoras[i].tipo == 'i') {
 			xrand = rand_01();
 			yrand = rand_01();
@@ -444,22 +446,47 @@ void mover_naves_invasoras(Jogo *jogo) {
 				}
 			}
 		}
+
+		// disparar bombas
+		if (jogo->naves_invasoras[i].taxa_disparo <= 0) {
+			for (j = 0; j < NUM_BOMBAS; j++) {
+				if (jogo->bombas[j].velocidade == 0) {
+					pos_bombas = j;
+					break;
+				}
+			}
+			jogo->bombas[pos_bombas].coord.x = jogo->naves_invasoras[i].coord.x;
+			jogo->bombas[pos_bombas].coord.y = jogo->naves_invasoras[i].coord.y;
+			jogo->bombas[pos_bombas].velocidade = 1; //random_l_h(1, 10);
+			jogo->pontuacoes->bombas++;
+
+			if (jogo->naves_invasoras[i].tipo == 'b')
+				jogo->naves_invasoras[i].taxa_disparo = TAXA_DISPARO_NAV_BASICAS;
+			if (jogo->naves_invasoras[i].tipo == 'e')
+				jogo->naves_invasoras[i].taxa_disparo = TAXA_DISPARO_NAV_ESQUIVAS;
+			if (jogo->naves_invasoras[i].tipo == 'i')
+				jogo->naves_invasoras[i].taxa_disparo = TAXA_DISPARO_NAV_INVASIVAS;
+		}
+
+		// a cada movimento decresce a taxa de disparo
+		jogo->naves_invasoras[i].taxa_disparo--;
 	}
 }
 
 /**** Funções de batalha ***********************************************/
 void bombas(Jogo *jogo) {
-	int i;
+	int i, n;
 	for (i = 0; i < NUM_BOMBAS; i++) {
+		//for (n = 0; n < NUM_NAV_INVASORAS; n++) {
 		if (jogo->bombas[i].velocidade != 0) {
-			jogo->bombas[i].coord.y--;
-			//jogo->pontuacoes->bombas++;
+			jogo->bombas[i].coord.y++;
 			if (jogo->bombas[i].coord.y >= POS_FIM_TAB_Y) { // bomba desaparece
 				jogo->bombas[i].velocidade = 0;
 				jogo->bombas[i].coord.y = 0;
 				jogo->bombas[i].coord.x = 0;
 			}
 		}
+		//}
 	}
 }
 
