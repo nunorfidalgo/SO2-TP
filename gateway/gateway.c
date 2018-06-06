@@ -33,6 +33,12 @@ int _tmain(int argc, TCHAR *argv[]) {
 	HANDLE			ThreatJogadores;
 	DWORD			IdJogadores;
 
+	if (argc > 1 && _tcscmp(argv[1], TEXT("?")) == 0) {
+		_tprintf(TEXT("%s '?' -> mostra esta ajuda;\n"), argv[0]);
+		_tprintf(TEXT("%s 'debug' -> mostra os dados de jogo e avisos;\n"), argv[0]);
+		exit(0);
+	}
+
 	MutexJogo = CreateMutex(NULL, FALSE, "MutexJogo");
 	if (MutexJogo == NULL) {
 		_tprintf(TEXT("MutexJogo error: %d\n"), GetLastError());
@@ -49,19 +55,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 		exit(1);
 	}
 
-	//if (argc > 1 && _tcscmp(argv[1], TEXT("debug")) == 0) DEBUG = TRUE;
-	//if (argc > 1) {
-	//	if (_tcscmp(argv[1], TEXT("debug")) == 0) {
-	//		
-	//	}
-	//	if (_tcscmp(argv[1], TEXT("?")) == 0) {
-	//		_tprintf(TEXT("argumentos:\n"));
-	//		_tprintf(TEXT("%s debug -> mostra os dados de jogo e mensagens...\n"), argv[0]);
-	//	}
-	//}
-	//else {
-	//	_tprintf(TEXT("Ligação estabelecida ao servidor... a aguardar algo??\n"));
-	//}
+	_tprintf(TEXT("\n** Ligação estabelecida ao servidor...\n"));
 
 	// Threat Jogadores
 	ThreatJogadores = CreateThread(NULL, 0, jogadores, (LPVOID)jogo, 0, &IdJogadores); // jogo->clientes add cliente to dados
@@ -196,7 +190,7 @@ void mostra_jogo_consola(Jogo *jogo) {
 	gotoxy(82, 3);
 	_tprintf(TEXT(" - Setas CIMA, BAIXO, DIR, ESQ:"));
 	gotoxy(82, 4);
-	_tprintf(TEXT("  - movimento nave defensora"));
+	_tprintf(TEXT("   movimentos nave defensora"));
 	gotoxy(82, 5);
 	_tprintf(TEXT(" - SPACE: dispara 'tiro(s)'"));
 	gotoxy(82, 6);
@@ -210,14 +204,20 @@ void mostra_jogo_consola(Jogo *jogo) {
 	gotoxy(82, 11);
 	_tprintf(TEXT(" - Nav Inv: %d"), jogo->pontuacoes->nav_inv);
 	gotoxy(82, 12);
-	_tprintf(TEXT(" - Nav Def: %d"), jogo->pontuacoes->nav_def);
+	_tprintf(TEXT(" - Nav Inv b: %d"), jogo->pontuacoes->nav_inv_b);
 	gotoxy(82, 13);
-	_tprintf(TEXT(" - Bombas: %d"), jogo->pontuacoes->bombas);
+	_tprintf(TEXT(" - Nav Inv e: %d"), jogo->pontuacoes->nav_inv_e);
 	gotoxy(82, 14);
-	_tprintf(TEXT(" - Tiros: %d"), jogo->pontuacoes->tiros);
+	_tprintf(TEXT(" - Nav Inv i: %d"), jogo->pontuacoes->nav_inv_i);
 	gotoxy(82, 15);
-	_tprintf(TEXT(" - PowerUps: %d"), jogo->pontuacoes->powerups);
+	_tprintf(TEXT(" - Nav Def: %d"), jogo->pontuacoes->nav_def);
 	gotoxy(82, 16);
+	_tprintf(TEXT(" - Bombas: %d"), jogo->pontuacoes->bombas);
+	gotoxy(82, 17);
+	_tprintf(TEXT(" - Tiros: %d"), jogo->pontuacoes->tiros);
+	gotoxy(82, 18);
+	_tprintf(TEXT(" - PowerUps: %d"), jogo->pontuacoes->powerups);
+	gotoxy(82, 19);
 	_tprintf(TEXT(" - Obstáculos: %d"), jogo->pontuacoes->obstaculos);
 
 	// Naves Invasoras
@@ -229,7 +229,8 @@ void mostra_jogo_consola(Jogo *jogo) {
 		}*/
 		if (jogo->naves_invasoras[i].resistencia != 0) {
 			gotoxy(jogo->naves_invasoras[i].coord.x, jogo->naves_invasoras[i].coord.y);
-			_tprintf(TEXT("i"));
+			//_tprintf(TEXT("i"));
+			_tprintf(TEXT("%c"), jogo->naves_invasoras[i].tipo);
 		}
 	}
 	// Naves Defensoras

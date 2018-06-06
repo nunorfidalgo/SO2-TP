@@ -3,13 +3,13 @@
 #include "../utils.h"
 #include "jogo.h"
 
-/**** Função de inicialização dos dados do jogo **********************************************************************/
+/**** Função de inicialização dos dados do jogo  ***********************************************/
 void inicia_jogo(Jogo *jogo) {
 	_tprintf(TEXT("* Novo Jogo:\n"));
 
 	PosicoesIniciais pos_init;
 
-	inicia_naves_invasoras(jogo->naves_invasoras, &pos_init);
+	inicia_naves_invasoras(jogo->naves_invasoras, &pos_init, jogo->pontuacoes);
 	inicia_naves_defensoras(jogo->naves_defensoras, &pos_init);
 	inicia_obstaculos(jogo->obstaculos, &pos_init);
 
@@ -22,13 +22,42 @@ void inicia_jogo(Jogo *jogo) {
 }
 
 /**** Funções de mostrar os dados ****/
-void inicia_naves_invasoras(NaveInvasora *naves_invasoras, PosicoesIniciais *pos_init) {
+//void inicia_naves_invasoras(NaveInvasora *naves_invasoras, PosicoesIniciais *pos_init) {
+//void inicia_naves_invasoras(Jogo *jogo, PosicoesIniciais *pos_init) {
+void inicia_naves_invasoras(NaveInvasora *naves_invasoras, PosicoesIniciais *pos_init, Pontuacao *pontuacoes) {
 	_tprintf(TEXT(" - Inicia %d Naves Invasoras.\n"), NUM_NAV_INVASORAS);
 	int i, j, xrand, yrand, pos_control = 0, conta = 0, pos = 0;
+	float nrand;
 	for (i = 0; i < NUM_NAV_INVASORAS; i++) {
-		naves_invasoras[i].resistencia = 2; // random_l_h(1, 10);
-		naves_invasoras[i].velocidade = random_l_h(1, 10) * 100; // em MS
-		naves_invasoras[i].tipo = '0';
+
+		// b-> basica, e->esquiva,  i-> invasivo
+		nrand = rand_01();
+		//if (DEBUG == TRUE) _tprintf(TEXT("nrand=%0.2f;\n"), nrand);
+		if (nrand <= PROB_NAV_INV_INVASIVA) {
+			naves_invasoras[i].tipo = 'i';
+			naves_invasoras[i].direcao = '0';
+			naves_invasoras[i].resistencia = 8; // random_l_h(4, 10);
+			naves_invasoras[i].velocidade = 200; // random_l_h(1, 10) * 100; // em MS
+			naves_invasoras[i].taxa_disparo = 8;
+			pontuacoes->nav_inv_i++;
+		}
+		else if (nrand <= PROB_NAV_INV_ESQUIVA) {
+
+			naves_invasoras[i].tipo = 'e';
+			naves_invasoras[i].direcao = '0';
+			naves_invasoras[i].resistencia = 3; // random_l_h(4, 10);
+			naves_invasoras[i].velocidade = 800; // random_l_h(1, 10) * 100; // em MS
+			naves_invasoras[i].taxa_disparo = 4; // -40 %
+			pontuacoes->nav_inv_e++;
+		}
+		else {
+			naves_invasoras[i].tipo = 'b';
+			naves_invasoras[i].direcao = 'd'; // d->direita, e->esquerda
+			naves_invasoras[i].resistencia = 1; // random_l_h(4, 10);
+			naves_invasoras[i].velocidade = 1000; // random_l_h(1, 10) * 100; // em MS
+			naves_invasoras[i].taxa_disparo = 10;
+			pontuacoes->nav_inv_b++;
+		}
 		do {
 			for (j = 0; j < TMP_POS; j++) {
 				xrand = random_l_h(POS_ZERO, COLUNAS);
@@ -61,8 +90,8 @@ void inicia_naves_defensoras(NaveDefensora *naves_defensoras, PosicoesIniciais *
 					pos_control++;
 			}
 		} while (pos_control == 0);
-		(pos_init->nav_inv + pos)->x = xrand;
-		(pos_init->nav_inv + pos)->y = yrand;
+		(pos_init->nav_def + pos)->x = xrand;
+		(pos_init->nav_def + pos)->y = yrand;
 		pos++;
 		naves_defensoras[i].coord.x = xrand;
 		naves_defensoras[i].coord.y = yrand;
@@ -156,7 +185,7 @@ void inicia_pontuacoes(Pontuacao *pontuacoes) {
 	}
 }
 
-/**** Mostrar a informação dos dados de jogo *********************************************************************************/
+/**** Mostrar a informação dos dados de jogo  ***********************************************/
 void mostra_naves_invasoras(NaveInvasora *naves_invasoras) {
 	_tprintf(TEXT("\n# Mostra Naves Invasoras:\n"));
 	int i;
@@ -212,20 +241,22 @@ void mostra_pontuacoes(Pontuacao *pontuacoes) {
 }
 
 void mostra_posições_iniciais(PosicoesIniciais *pos_init) {
-	_tprintf(TEXT(" - Mostra posições iniciais:\n"));
+	_tprintf(TEXT("\n* Mostra posições iniciais:\n"));
 	int i;
 	//#define TMP_POS (NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS + NUM_BOMBAS + NUM_TIROS + NUM_POWERUPS + NUM_OBSTACULOS)
-	_tprintf(TEXT("NAV INV\n"));
+	_tprintf(TEXT(" - Naves Invasoras: "));
 	for (i = 0; i < NUM_NAV_INVASORAS; i++) {
-		_tprintf(TEXT("(%02d, %02d), "), pos_init->nav_inv[i].x, pos_init->nav_inv[i].y);
+		_tprintf(TEXT("(%02d,%02d), "), pos_init->nav_inv[i].x, pos_init->nav_inv[i].y);
 	}
-	_tprintf(TEXT("\nNAV DEF\n"));
+	_tprintf(TEXT("\n"));
+	_tprintf(TEXT(" - Naves Defensoras: "));
 	for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
-		_tprintf(TEXT("(%02d, %02d), "), pos_init->nav_def[i].x, pos_init->nav_def[i].y);
+		_tprintf(TEXT("(%02d,%02d), "), pos_init->nav_def[i].x, pos_init->nav_def[i].y);
 	}
-	_tprintf(TEXT("\nOBSTACULOS\n"));
+	_tprintf(TEXT("\n"));
+	_tprintf(TEXT(" - Obstáculos: "));
 	for (i = 0; i < NUM_OBSTACULOS; i++) {
-		_tprintf(TEXT("(%02d, %02d), "), pos_init->obstaculos[i].x, pos_init->obstaculos[i].y);
+		_tprintf(TEXT("(%02d,%02d), "), pos_init->obstaculos[i].x, pos_init->obstaculos[i].y);
 	}
 	_tprintf(TEXT("\n"));
 }
@@ -234,48 +265,18 @@ void mostra_posições_iniciais(PosicoesIniciais *pos_init) {
 DWORD __stdcall naves_invasoras(void *ptr) {
 	if (DEBUG == TRUE) _tprintf(TEXT("- Funcao da Thread Naves Invasoras:\n"));
 	Jogo *jogo = (Jogo *)ptr;
-
-	int i, counter = 0;
-	float xrand, yrand;
-
+	int counter = 0;
 	while (1) {
 		Sleep(VEL_500MS);
 		//if (DEBUG == TRUE) _tprintf(TEXT("\nThread Naves Invasoras-----------------------------------------------------------------------------------------\n"));
 		//WaitForSingleObject(SemEscreveJogo, INFINITE);
 		WaitForSingleObject(MutexJogo, INFINITE);
 
-		for (i = 0; i < NUM_NAV_INVASORAS; i++) {
-			xrand = rand_01();
-			yrand = rand_01();
-			counter++;
-			//if (DEBUG == TRUE) _tprintf(TEXT("xrand=%0.2f, yrand=%0.2f, counter=%d;\n"), xrand, yrand, counter);
+		counter++;
+		//if (DEBUG == TRUE) _tprintf(TEXT("counter=%d;\n"), counter);
 
-			// descer
-			if (yrand < PROB_DESCER) {
-				if (jogo->naves_invasoras[i].coord.y < POS_Y_LIMITE_NAV_DEF_MOV) {
-					jogo->naves_invasoras[i].coord.y++;
-					//if (DEBUG == TRUE) _tprintf(TEXT("nave desce!!\n"));
-				}
-				/*	if (jogo->naves_invasoras[i].coord.y >= POS_Y_LIMITE_NAV_DEF_MOV) {
-						_tprintf(TEXT("\n\nFIM!! Invasores vencem!\n"));
-						_gettch();
-						exit(1);
-					}*/
-			}
-			// andar para os lados
-			if (xrand > PROB_LADOS) {
-				if (jogo->naves_invasoras[i].coord.x < COLUNAS - 1) {
-					jogo->naves_invasoras[i].coord.x++;
-					//if (DEBUG == TRUE) _tprintf(TEXT("nave dir!!\n"));
-				}
-			}
-			else {
-				if (jogo->naves_invasoras[i].coord.x > POS_ZERO) {
-					jogo->naves_invasoras[i].coord.x--;
-					//if (DEBUG == TRUE) _tprintf(TEXT("nave esq!!\n"));
-				}
-			}
-		}
+		mover_naves_invasoras(jogo);
+
 		//if (DEBUG == TRUE) mostra_naves_invasoras(jogo->naves_invasoras);
 
 		ReleaseMutex(MutexJogo);
@@ -292,7 +293,6 @@ DWORD __stdcall naves_invasoras(void *ptr) {
 DWORD __stdcall batalha(void *ptr) {
 	if (DEBUG == TRUE) _tprintf(TEXT("- Funcao da Thread Batalha:\n"));
 	Jogo *jogo = (Jogo *)ptr;
-	int i, t, o;
 	while (1) {
 		Sleep(VEL_100MS);
 		// if (DEBUG == TRUE) _tprintf(TEXT("\nThread Batalha-----------------------------------------------------------------------------------------\n"));
@@ -303,66 +303,10 @@ DWORD __stdcall batalha(void *ptr) {
 		// verificar as naves inv/def para terminar o jogo
 
 		// bombas
-		for (i = 0; i < NUM_BOMBAS; i++) {
-			if (jogo->bombas[i].velocidade != 0) {
-				jogo->bombas[i].coord.y--;
-				//jogo->pontuacoes->bombas++;
-				if (jogo->bombas[i].coord.y >= POS_FIM_TAB_Y) { // bomba desaparece
-					jogo->bombas[i].velocidade = 0;
-					jogo->bombas[i].coord.y = 0;
-					jogo->bombas[i].coord.x = 0;
-				}
-			}
-		}
+		bombas(jogo);
 
 		// tiros
-		for (t = 0; t < NUM_TIROS; t++) {
-			if (jogo->tiros[t].velocidade != 0) {
-				jogo->tiros[t].coord.y--;
-				// obstaculos
-				for (o = 0; o < NUM_OBSTACULOS; o++) {
-					if (jogo->obstaculos[o].resistencia > 0) {
-						if (jogo->obstaculos[o].coord.x == jogo->tiros[t].coord.x && jogo->obstaculos[o].coord.y == jogo->tiros[t].coord.y) {
-							jogo->obstaculos[o].resistencia--;
-							jogo->tiros[t].velocidade = 0;
-							jogo->tiros[t].coord.y = 0;
-							jogo->tiros[t].coord.x = 0;
-							if (jogo->obstaculos[o].resistencia <= 0) {
-								jogo->obstaculos[o].coord.x = 0;
-								jogo->obstaculos[o].coord.y = 0;
-								jogo->obstaculos[o].dimensao.altura = 0;
-								jogo->obstaculos[o].dimensao.largura = 0;
-								jogo->pontuacoes->obstaculos--;
-							}
-						}
-					}
-
-				}
-				// naves invasoras
-				for (i = 0; i < NUM_NAV_INVASORAS; i++) {
-					if (jogo->naves_invasoras[i].resistencia > 0) {
-						if (jogo->naves_invasoras[i].coord.x == jogo->tiros[t].coord.x && jogo->naves_invasoras[i].coord.y == jogo->tiros[t].coord.y) {
-							jogo->naves_invasoras[i].resistencia--;
-							jogo->tiros[t].velocidade = 0;
-							jogo->tiros[t].coord.y = 0;
-							jogo->tiros[t].coord.x = 0;
-							if (jogo->naves_invasoras[i].resistencia <= 0) {
-								jogo->naves_invasoras[i].coord.x = 0;
-								jogo->naves_invasoras[i].coord.y = 0;
-								jogo->naves_invasoras[i].dimensao.altura = 0;
-								jogo->naves_invasoras[i].dimensao.largura = 0;
-								jogo->pontuacoes->nav_inv--;
-							}
-						}
-					}
-				}
-				if (jogo->tiros[t].coord.y <= POS_ZERO) { // tiro desaparece
-					jogo->tiros[t].velocidade = 0;
-					jogo->tiros[t].coord.y = 0;
-					jogo->tiros[t].coord.x = 0;
-				}
-			}
-		}
+		tiros(jogo);
 
 		//if (DEBUG == TRUE) _tprintf(TEXT("POS_Y_LIMITE_NAV_DEF_MOV: %d\n"), POS_Y_LIMITE_NAV_DEF_MOV);
 		// if (DEBUG == TRUE) mostra_naves_defensoras(jogo->naves_defensoras);
@@ -371,7 +315,6 @@ DWORD __stdcall batalha(void *ptr) {
 		//if (DEBUG == TRUE) mostra_obstaculos(jogo->obstaculos);
 
 		ReleaseMutex(MutexJogo);
-
 
 		/*Sleep(VEL_300MS);*/
 		// O sleep mudei para cima!!!!
@@ -395,7 +338,7 @@ DWORD __stdcall efeitos(void *ptr) {
 	//	WaitForSingleObject(MutexJogo, INFINITE);
 
 	//	// powerups
-	//
+	// powerups(jogo);
 
 	//	//if (DEBUG == TRUE) mostra_powerups(jogo->powerups);
 	//
@@ -406,4 +349,172 @@ DWORD __stdcall efeitos(void *ptr) {
 	//	//ReleaseSemaphore(SemLerJogo, 1, NULL);
 	//}
 	return 0;
+}
+
+/**** Funções de batalha ***********************************************/
+void mover_naves_invasoras(Jogo *jogo) {
+	int i;
+	float xrand, yrand;
+	for (i = 0; i < NUM_NAV_INVASORAS; i++) {
+
+		/*	if (jogo->naves_invasoras[i].coord.y >= POS_Y_LIMITE_NAV_DEF_MOV) {
+		_tprintf(TEXT("\n\nFIM!! Invasores vencem!\n"));
+		_gettch();
+		exit(1);
+		}*/
+
+		// tipo basico
+		if (jogo->naves_invasoras[i].tipo == 'b') {
+			// andar para a direita
+			if (jogo->naves_invasoras[i].direcao == 'd') {
+				if (jogo->naves_invasoras[i].coord.x < COLUNAS - 1) {
+					jogo->naves_invasoras[i].coord.x++;
+				}
+				else {
+					jogo->naves_invasoras[i].coord.y++;
+					jogo->naves_invasoras[i].direcao = 'e';
+				}
+			}
+			else if (jogo->naves_invasoras[i].direcao == 'e') {
+				if (jogo->naves_invasoras[i].coord.x > POS_ZERO) {
+					jogo->naves_invasoras[i].coord.x--;
+				}
+				else {
+					jogo->naves_invasoras[i].coord.y++;
+					jogo->naves_invasoras[i].direcao = 'd';
+				}
+			}
+		}
+
+		// tipo esquivo
+		if (jogo->naves_invasoras[i].tipo == 'e') {
+			xrand = rand_01();
+			yrand = rand_01();
+			//if (DEBUG == TRUE) _tprintf(TEXT("xrand=%0.2f, yrand=%0.2f;\n"), xrand, yrand);
+
+			// andar para cima e para baixa 
+			if (yrand <= PROB_LADOS) { // este prob é de 50%, não vale a pena estar a criar outro define
+				if (jogo->naves_invasoras[i].coord.y < POS_Y_LIMITE_NAV_DEF_MOV) {
+					jogo->naves_invasoras[i].coord.y++;
+				}
+			}
+			else {
+				if (jogo->naves_invasoras[i].coord.y > POS_ZERO) {
+					jogo->naves_invasoras[i].coord.y--;
+					//if (DEBUG == TRUE) _tprintf(TEXT("nave desce!!\n"));
+				}
+			}
+
+			// andar para os lados
+			if (xrand <= PROB_LADOS) {
+				if (jogo->naves_invasoras[i].coord.x < COLUNAS - 1) {
+					jogo->naves_invasoras[i].coord.x++;
+				}
+			}
+			else {
+				if (jogo->naves_invasoras[i].coord.x > POS_ZERO) {
+					jogo->naves_invasoras[i].coord.x--;
+				}
+			}
+		}
+
+		// tipo invasivo
+		if (jogo->naves_invasoras[i].tipo == 'i') {
+			xrand = rand_01();
+			yrand = rand_01();
+			//if (DEBUG == TRUE) _tprintf(TEXT("xrand=%0.2f, yrand=%0.2f;\n"), xrand, yrand);
+			// descer
+			if (yrand <= PROB_DESCER) {
+				if (jogo->naves_invasoras[i].coord.y < POS_Y_LIMITE_NAV_DEF_MOV) {
+					jogo->naves_invasoras[i].coord.y++;
+					//if (DEBUG == TRUE) _tprintf(TEXT("nave desce!!\n"));
+				}
+			}
+			// andar para os lados
+			if (xrand <= PROB_LADOS) {
+				if (jogo->naves_invasoras[i].coord.x < COLUNAS - 1) {
+					jogo->naves_invasoras[i].coord.x++;
+					//if (DEBUG == TRUE) _tprintf(TEXT("nave dir!!\n"));
+				}
+			}
+			else {
+				if (jogo->naves_invasoras[i].coord.x > POS_ZERO) {
+					jogo->naves_invasoras[i].coord.x--;
+					//if (DEBUG == TRUE) _tprintf(TEXT("nave esq!!\n"));
+				}
+			}
+		}
+	}
+}
+
+/**** Funções de batalha ***********************************************/
+void bombas(Jogo *jogo) {
+	int i;
+	for (i = 0; i < NUM_BOMBAS; i++) {
+		if (jogo->bombas[i].velocidade != 0) {
+			jogo->bombas[i].coord.y--;
+			//jogo->pontuacoes->bombas++;
+			if (jogo->bombas[i].coord.y >= POS_FIM_TAB_Y) { // bomba desaparece
+				jogo->bombas[i].velocidade = 0;
+				jogo->bombas[i].coord.y = 0;
+				jogo->bombas[i].coord.x = 0;
+			}
+		}
+	}
+}
+
+void tiros(Jogo *jogo) {
+	int i, t, o;
+	for (t = 0; t < NUM_TIROS; t++) {
+		if (jogo->tiros[t].velocidade != 0) {
+			jogo->tiros[t].coord.y--;
+			// obstaculos
+			for (o = 0; o < NUM_OBSTACULOS; o++) {
+				if (jogo->obstaculos[o].resistencia > 0) {
+					if (jogo->obstaculos[o].coord.x == jogo->tiros[t].coord.x && jogo->obstaculos[o].coord.y == jogo->tiros[t].coord.y) {
+						jogo->obstaculos[o].resistencia--;
+						jogo->tiros[t].velocidade = 0;
+						jogo->tiros[t].coord.y = 0;
+						jogo->tiros[t].coord.x = 0;
+						if (jogo->obstaculos[o].resistencia <= 0) {
+							jogo->obstaculos[o].coord.x = 0;
+							jogo->obstaculos[o].coord.y = 0;
+							jogo->obstaculos[o].dimensao.altura = 0;
+							jogo->obstaculos[o].dimensao.largura = 0;
+							jogo->pontuacoes->obstaculos--;
+						}
+					}
+				}
+
+			}
+			// naves invasoras
+			for (i = 0; i < NUM_NAV_INVASORAS; i++) {
+				if (jogo->naves_invasoras[i].resistencia > 0) {
+					if (jogo->naves_invasoras[i].coord.x == jogo->tiros[t].coord.x && jogo->naves_invasoras[i].coord.y == jogo->tiros[t].coord.y) {
+						jogo->naves_invasoras[i].resistencia--;
+						jogo->tiros[t].velocidade = 0;
+						jogo->tiros[t].coord.y = 0;
+						jogo->tiros[t].coord.x = 0;
+						if (jogo->naves_invasoras[i].resistencia <= 0) {
+							jogo->naves_invasoras[i].coord.x = 0;
+							jogo->naves_invasoras[i].coord.y = 0;
+							jogo->naves_invasoras[i].dimensao.altura = 0;
+							jogo->naves_invasoras[i].dimensao.largura = 0;
+							jogo->pontuacoes->nav_inv--;
+						}
+					}
+				}
+			}
+			if (jogo->tiros[t].coord.y <= POS_ZERO) { // tiro desaparece
+				jogo->tiros[t].velocidade = 0;
+				jogo->tiros[t].coord.y = 0;
+				jogo->tiros[t].coord.x = 0;
+			}
+		}
+	}
+}
+
+/**** Funções de efeitos ***********************************************/
+void powerups(Jogo *Jogo) {
+
 }

@@ -2,7 +2,8 @@
 
 // inicializa as variavéis de jogo
 void inicia_jogo(Jogo *jogo);
-void inicia_naves_invasoras(NaveInvasora *naves_invasoras, PosicoesIniciais *pos_init);
+//void inicia_naves_invasoras(NaveInvasora *naves_invasoras, PosicoesIniciais *pos_init);
+void inicia_naves_invasoras(NaveInvasora *naves_invasoras, PosicoesIniciais *pos_init, Pontuacao *pontuacoes);
 void inicia_naves_defensoras(NaveDefensora *naves_defensoras, PosicoesIniciais *pos_init);
 void inicia_bombas(Bomba *bombas);
 void inicia_tiros(Tiro *tiros);
@@ -24,3 +25,13 @@ void mostra_posições_iniciais(PosicoesIniciais *pos_init);
 DWORD __stdcall naves_invasoras(void *ptr);
 DWORD __stdcall batalha(void *ptr);
 DWORD __stdcall efeitos(void *ptr);
+
+// funções das naves invasoras
+void mover_naves_invasoras(Jogo *jogo);
+
+// funções de batalha
+void bombas(Jogo *jogo);
+void tiros(Jogo *jogo);
+
+// funções de efeitos
+void powerups(Jogo *Jogo);

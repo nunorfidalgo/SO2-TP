@@ -39,18 +39,26 @@
 #define POS_Y_LIMITE_NAV_DEF_MOV (int)(POS_FIM_TAB_Y / 1.2) // 20 %
 
 // número maximo a mostrar no campo de batalha
-#define NUM_NAV_INVASORAS 2
+#define NUM_NAV_INVASORAS 10
+//#define NUM_NAV_INV_BASICAS 4
+//#define NUM_NAV_INV_ESQUIVA 2
+// outras
 #define NUM_NAV_DEFENSORAS 1 // equivalente ao num de clientes, um cliente por cada nave defensora
 #define NUM_BOMBAS NUM_NAV_INVASORAS * 10
-#define NUM_TIROS NUM_NAV_DEFENSORAS * 20 
+#define NUM_TIROS NUM_NAV_DEFENSORAS * 20
 #define NUM_POWERUPS 4
 #define NUM_POWERUPS_NAV_DEF 1
 #define NUM_OBSTACULOS 10
 #define TMP_POS (NUM_NAV_INVASORAS + NUM_NAV_DEFENSORAS + NUM_BOMBAS + NUM_TIROS + NUM_POWERUPS + NUM_OBSTACULOS)
 
-// Probabilidades do movimento das naves invasoras
+// Probabilidades
+#define PROB_NAV_INV_BASICA 0.8
+#define PROB_NAV_INV_ESQUIVA 0.6
+#define PROB_NAV_INV_INVASIVA 0.4
 #define PROB_DESCER 0.2
 #define PROB_LADOS 0.5
+#define PROB_BOMBA 0.3
+#define PROB_POWERUP 0.1
 
 // Mensagens
 #define TEXTO 160
@@ -108,7 +116,9 @@ typedef struct {
 typedef struct {
 	unsigned int	resistencia;
 	unsigned int	velocidade;
-	char			tipo;
+	char			tipo; // b-> basica, e->esquiva,  i-> invasivo
+	unsigned int	taxa_disparo;
+	char			direcao;
 	Dimensao		dimensao;
 	Posicao			coord;
 } NaveInvasora;
@@ -125,6 +135,9 @@ typedef struct {
 // Elemento de jogo - Pontuacao de cada jogador - rever estes valores
 typedef struct {
 	unsigned int	nav_inv;
+	unsigned int	nav_inv_b;
+	unsigned int	nav_inv_e;
+	unsigned int	nav_inv_i;
 	unsigned int	nav_def;
 	unsigned int	tiros;
 	unsigned int	bombas;

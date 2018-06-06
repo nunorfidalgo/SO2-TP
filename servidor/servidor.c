@@ -3,7 +3,7 @@
 #include "../utils.h"
 #include "jogo.h"
 
-// Variáveis globais (definidas no servidor.h)
+// Variáveis globais (definidas no servidor.h) 
 BOOL	DEBUG = FALSE;
 TCHAR	NomeSemaforoPodeEscrever[] = TEXT("Escrever no semáforo");
 TCHAR	NomeSemaforoPodeLer[] = TEXT("Ler do semáforo");
@@ -31,12 +31,10 @@ int _tmain(int argc, TCHAR *argv[]) {
 	int input;
 
 	if (argc > 1 && _tcscmp(argv[1], TEXT("?")) == 0) {
-		_tprintf(TEXT("%s ? -> mostra esta ajuda;\n"), argv[0]);
-		_tprintf(TEXT("%s debug -> mostra os dados de jogo e mensagens;\n"), argv[0]);
+		_tprintf(TEXT("%s '?' -> mostra esta ajuda;\n"), argv[0]);
+		_tprintf(TEXT("%s 'debug' -> mostra os dados de jogo e avisos;\n"), argv[0]);
 		exit(0);
 	}
-
-	_tprintf(TEXT("********************************************************************************\n"));
 
 	jogo = CriaMemoriaPartilhadaJogo(&hMapMemParJogo, &tam_jogo);
 
@@ -65,16 +63,16 @@ int _tmain(int argc, TCHAR *argv[]) {
 
 	if (argc > 1 && _tcscmp(argv[1], TEXT("debug")) == 0) DEBUG = TRUE;
 	inicia_jogo(jogo);
-	// if (DEBUG == TRUE) mostra_naves_invasoras(jogo->naves_invasoras);
-	// if (DEBUG == TRUE) mostra_naves_defensoras(jogo->naves_defensoras);
-	// if (DEBUG == TRUE) mostra_bombas(jogo->bombas);
-	// if (DEBUG == TRUE) mostra_tiros(jogo->tiros);
-	// if (DEBUG == TRUE) mostra_powerups(jogo->powerups);
-	// if (DEBUG == TRUE) mostra_obstaculos(jogo->obstaculos);
-	// if (DEBUG == TRUE) mostra_pontuacoes(jogo->pontuacoes);
+	if (DEBUG == TRUE) mostra_naves_invasoras(jogo->naves_invasoras);
+	if (DEBUG == TRUE) mostra_naves_defensoras(jogo->naves_defensoras);
+	if (DEBUG == TRUE) mostra_bombas(jogo->bombas);
+	if (DEBUG == TRUE) mostra_tiros(jogo->tiros);
+	if (DEBUG == TRUE) mostra_powerups(jogo->powerups);
+	if (DEBUG == TRUE) mostra_obstaculos(jogo->obstaculos);
+	if (DEBUG == TRUE) mostra_pontuacoes(jogo->pontuacoes);
 
-	_tprintf(TEXT("\n* sizeof(jogo): %d bytes\n"), sizeof(Jogo));
-	_tprintf(TEXT("* Novo jogo pronto, a aguardar gateway...\n"));
+	_tprintf(TEXT("\n** Uso de mémoria (jogo): %d bytes (%d Kb)\n\n"), sizeof(Jogo), sizeof(Jogo) / 1014);
+	_tprintf(TEXT("* Novo jogo pronto, a aguardar gateway... (falta detectar o gateway a ligar e vice versa)\n\n"));
 
 	htNavInvs = CreateThread(NULL, 0, naves_invasoras, (LPVOID)jogo, 0, &idNavInvs);
 	if (htNavInvs != NULL) {
@@ -104,6 +102,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 	}
 
 	// sair com ESC
+	_tprintf(TEXT("\n** 'ESC' -> termina..."));
 	input = _gettch();
 	input = toupper(input);
 	_flushall();
