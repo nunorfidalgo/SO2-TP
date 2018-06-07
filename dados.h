@@ -152,8 +152,8 @@ typedef struct {
 
 typedef struct {
 	unsigned int	nivel; // ???? será assim para designar o nível / como fazer o incremento de dificuldade ????
-	unsigned int	In;
-	unsigned int	Out;
+	//unsigned int	In;
+	//unsigned int	Out;
 	NaveInvasora	naves_invasoras[NUM_NAV_INVASORAS];
 	NaveDefensora	naves_defensoras[NUM_NAV_DEFENSORAS];
 	Bomba			bombas[NUM_BOMBAS];

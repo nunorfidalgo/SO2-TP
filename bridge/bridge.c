@@ -21,6 +21,38 @@ Jogo BRIDGE_API *AcedeMemoriaPartilhadaJogo(HANDLE *hMapMemParJogo, LARGE_INTEGE
 	return (Jogo *)MapViewOfFile(hMapMemParJogo, FILE_MAP_ALL_ACCESS, 0, 0, (SIZE_T)tam_jogo->QuadPart);
 }
 
+void BRIDGE_API CriaSemaforoEscreveJogo(HANDLE *SemEscreveJogo) {
+	SemEscreveJogo = CreateSemaphore(NULL, SEMAFORO_JOGO_NUM_ACCOES, SEMAFORO_JOGO_NUM_ACCOES, TEXT("SemEscreveJogo"));
+	if (SemEscreveJogo == NULL) {
+		_tprintf(TEXT("Erro ao criar semáforo de escrita do jogo! (código=%d)\n"), GetLastError());
+		exit(1);
+	}
+}
+
+void BRIDGE_API AcedeSemaforoEscreveJogo(HANDLE *SemEscreveJogo) {
+	SemEscreveJogo = OpenSemaphore(SYNCHRONIZE, TRUE, TEXT("SemEscreveJogo"));
+	if (SemEscreveJogo == NULL) {
+		_tprintf(TEXT("Erro ao aceder semáforo de escrita do jogo! (código=%d)\n"), GetLastError());
+		exit(1);
+	}
+}
+
+void BRIDGE_API CriaSemaforoLerJogo(HANDLE *SemLerJogo) {
+	SemLerJogo = CreateSemaphore(NULL, 0, SEMAFORO_JOGO_NUM_ACCOES, TEXT("SemLeJogo"));
+	if (SemLerJogo == NULL) {
+		_tprintf(TEXT("Erro ao criar semáforo de leitura do jogo! (código=%d)\n"), GetLastError());
+		exit(1);
+	}
+}
+
+void BRIDGE_API AcedeSemaforoLerJogo(HANDLE *SemLerJogo) {
+	SemLerJogo = OpenSemaphore(SYNCHRONIZE, TRUE, TEXT("SemLeJogo"));
+	if (SemLerJogo == NULL) {
+		_tprintf(TEXT("Erro ao acdecer semáforo de leitura do jogo! (código=%d)\n"), GetLastError());
+		exit(1);
+	}
+}
+
 //Mensagem BRIDGE_API * CriaMemoriaPartilhadaMensagens(HANDLE	&hMapMemParMsg, LARGE_INTEGER &tam_mensagem) {
 //	tam_mensagem.QuadPart = sizeof(Mensagem);
 //	hMapMemParMsg = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, tam_mensagem.HighPart, tam_mensagem.LowPart, TEXT("Mensagens"));
