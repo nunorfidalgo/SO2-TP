@@ -270,9 +270,9 @@ DWORD __stdcall naves_invasoras(void *ptr) {
 	Jogo *jogo = (Jogo *)ptr;
 	int counter = 0;
 	while (1) {
-
 		//if (DEBUG == TRUE) _tprintf(TEXT("\nThread Naves Invasoras-----------------------------------------------------------------------------------------\n"));
-		//WaitForSingleObject(SemEscreveJogo, INFINITE);
+		
+		WaitForSingleObject(SemEscreveJogo, INFINITE);
 		WaitForSingleObject(MutexJogo, INFINITE);
 
 		counter++;
@@ -287,8 +287,7 @@ DWORD __stdcall naves_invasoras(void *ptr) {
 		//Sleep(VEL_200MS);
 		//Sleep(VEL_500MS);
 		Sleep(VEL_UM_SEC);
-
-		//ReleaseSemaphore(SemLerJogo, 1, NULL);
+		ReleaseSemaphore(SemLerJogo, 1, NULL);
 	}
 	return 0;
 }
@@ -297,10 +296,9 @@ DWORD __stdcall batalha(void *ptr) {
 	if (DEBUG == TRUE) _tprintf(TEXT("- Funcao da Thread Batalha:\n"));
 	Jogo *jogo = (Jogo *)ptr;
 	while (1) {
-
 		// if (DEBUG == TRUE) _tprintf(TEXT("\nThread Batalha-----------------------------------------------------------------------------------------\n"));
 
-		//WaitForSingleObject(SemEscreveJogo, INFINITE);
+		WaitForSingleObject(SemEscreveJogo, INFINITE);
 		WaitForSingleObject(MutexJogo, INFINITE);
 
 		// verificar as naves inv/def para terminar o jogo
@@ -319,10 +317,11 @@ DWORD __stdcall batalha(void *ptr) {
 
 		ReleaseMutex(MutexJogo);
 
+		//system("PAUSE");
+
 		//Sleep(VEL_500MS);
 		Sleep(VEL_UM_SEC);
-
-		//ReleaseSemaphore(SemLerJogo, 1, NULL);
+		ReleaseSemaphore(SemLerJogo, 1, NULL);
 	}
 	return 0;
 }
@@ -475,7 +474,7 @@ void mover_naves_invasoras(Jogo *jogo) {
 
 /**** Funções de batalha ***********************************************/
 void bombas(Jogo *jogo) {
-	int i, n;
+	int i;
 	for (i = 0; i < NUM_BOMBAS; i++) {
 		//for (n = 0; n < NUM_NAV_INVASORAS; n++) {
 		if (jogo->bombas[i].velocidade != 0) {

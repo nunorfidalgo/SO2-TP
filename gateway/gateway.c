@@ -10,15 +10,15 @@
 // funções das Threads
 DWORD __stdcall jogadores(void *ptr);
 
+void user_input_consola(Jogo *jogo);
 void mostra_jogo_consola(Jogo *jogo);
 
 // Variáveis globais
 BOOL	DEBUG = FALSE;
+//HANDLE	MutexGateway;
 HANDLE	MutexJogo;
 HANDLE	SemLerJogo, SemEscreveJogo;
-TCHAR	NomeSemaforoPodeEscrever[] = TEXT("Escrever no semáforo");
-TCHAR	NomeSemaforoPodeLer[] = TEXT("Ler do semáforo");
-int		input, i, j, pos_tiros = 0;
+int		input = 0, i, j, pos_tiros = 0;
 
 int _tmain(int argc, TCHAR *argv[]) {
 #ifdef UNICODE
@@ -39,22 +39,17 @@ int _tmain(int argc, TCHAR *argv[]) {
 		exit(0);
 	}
 
-	MutexJogo = CreateMutex(NULL, FALSE, (LPCWSTR) "MutexJogo");
+	MutexJogo = OpenMutex(MUTEX_ALL_ACCESS, FALSE, "MutexJogo");
 	if (MutexJogo == NULL) {
 		_tprintf(TEXT("MutexJogo error: %d\n"), GetLastError());
 		exit(1);
 	}
 
+	AcedeSemaforoEscreveJogo(SemEscreveJogo);
+	AcedeSemaforoLerJogo(SemLerJogo);
+
 	jogo = AcedeMemoriaPartilhadaJogo(&hMapMemParJogo, &tam_jogo); // -mudar isto para o gateway nao estar a correr sem o servidor !!!!!
-
-	SemEscreveJogo = CreateSemaphore(NULL, SEMAFORO_JOGO_NUM_ACCOES, SEMAFORO_JOGO_NUM_ACCOES, NomeSemaforoPodeEscrever);
-	SemLerJogo = CreateSemaphore(NULL, 0, SEMAFORO_JOGO_NUM_ACCOES, NomeSemaforoPodeLer);
-
-	if (SemEscreveJogo == NULL || SemLerJogo == NULL) {
-		_tprintf(TEXT("[Erro]Criação de objectos do Windows(%d)\n"), GetLastError());
-		exit(1);
-	}
-
+	
 	_tprintf(TEXT("\n** Ligação estabelecida ao servidor...\n"));
 
 	// Threat Jogadores
@@ -68,9 +63,11 @@ int _tmain(int argc, TCHAR *argv[]) {
 	}
 
 	WaitForSingleObject(ThreatJogadores, INFINITE);
-	CloseHandle(MutexJogo);
-
+		
 	UnmapViewOfFile(jogo);
+	CloseHandle(SemEscreveJogo);
+	CloseHandle(SemLerJogo);
+	CloseHandle(MutexJogo);
 	CloseHandle(hMapMemParJogo);
 
 	_tprintf(TEXT("\nterminou...\n"));
@@ -82,80 +79,71 @@ DWORD __stdcall jogadores(void *ptr) {
 	Jogo *jogo = (Jogo *)ptr;
 
 	while (1) {
-		//WaitForSingleObject(SemLerJogo, INFINITE);
+		WaitForSingleObject(SemLerJogo, INFINITE);
 		WaitForSingleObject(MutexJogo, INFINITE);
 
 		system("cls");
 		mostra_jogo_consola(jogo);
-
-		//Sleep(VEL_MEIO_SEC);
 		gotoxy(17, 25); // prompt
 
-		//_tprintf(TEXT("[Erro](%d)\n"), GetLastError());
-		/*if (jogo == NULL)
-			_tprintf(TEXT("[Erro](%d)\n"), GetLastError());*/
-
-			/*input = _gettch();
-			input = toupper(input);*/
-		input = 0;
-
-		if (input == 27) // sair com ESC
-			exit(1);
-
-		// movimento da naves defensoras
-		if (input == 80) { // CIMA
-			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
-				if (jogo->naves_defensoras[i].coord.y < POS_FIM_TAB_Y - 1)
-					jogo->naves_defensoras[i].coord.y++;
-			}
-		}
-		if (input == 72) { // BAIXO
-			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
-				if (jogo->naves_defensoras[i].coord.y > POS_Y_LIMITE_NAV_DEF_MOV)
-					jogo->naves_defensoras[i].coord.y--;
-			}
-		}
-		if (input == 77) { // DIR
-			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
-				if (jogo->naves_defensoras[i].coord.x < COLUNAS - 1)
-					jogo->naves_defensoras[i].coord.x++;
-			}
-		}
-		if (input == 75) { // ESQ
-			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
-				if (jogo->naves_defensoras[i].coord.x > POS_ZERO)
-					jogo->naves_defensoras[i].coord.x--;
-			}
-		}
-
-		if (input == 32) { // Tiro naves defensoras
-			for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
-				for (j = 0; j < NUM_TIROS; j++) {
-					if (jogo->tiros[j].velocidade == 0) {
-						pos_tiros = j;
-						break;
-					}
-				}
-				jogo->tiros[pos_tiros].coord.x = jogo->naves_defensoras[i].coord.x;
-				jogo->tiros[pos_tiros].coord.y = jogo->naves_defensoras[i].coord.y;
-				jogo->tiros[pos_tiros].velocidade = random_l_h(1, 10);
-				jogo->pontuacoes->tiros++;
-			}
-		}
-
-		//if (input == '')
-		//if (input == '')
-		//if (input == '')
-		//if (input == '')
-		//_tprintf(TEXT("%d"), input);
-
-		_flushall();
+		user_input_consola(jogo);
 
 		ReleaseMutex(MutexJogo);
 		Sleep(VEL_UM_SEC);
-		//ReleaseSemaphore(SemEscreveJogo, 1, NULL);
+		ReleaseSemaphore(SemEscreveJogo, 1, NULL);
 	}
 	return 0;
+}
+
+void user_input_consola(Jogo *jogo) {
+	input = _gettch();
+	input = toupper(input);
+	
+	if (input == 27) // sair com ESC
+		exit(1);
+
+	// movimento da naves defensoras
+	if (input == 80) { // CIMA
+		for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
+			if (jogo->naves_defensoras[i].coord.y < POS_FIM_TAB_Y - 1)
+				jogo->naves_defensoras[i].coord.y++;
+		}
+	}
+	if (input == 72) { // BAIXO
+		for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
+			if (jogo->naves_defensoras[i].coord.y > POS_Y_LIMITE_NAV_DEF_MOV)
+				jogo->naves_defensoras[i].coord.y--;
+		}
+	}
+	if (input == 77) { // DIR
+		for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
+			if (jogo->naves_defensoras[i].coord.x < COLUNAS - 1)
+				jogo->naves_defensoras[i].coord.x++;
+		}
+	}
+	if (input == 75) { // ESQ
+		for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
+			if (jogo->naves_defensoras[i].coord.x > POS_ZERO)
+				jogo->naves_defensoras[i].coord.x--;
+		}
+	}
+
+	if (input == 32) { // Tiro naves defensoras
+		for (i = 0; i < NUM_NAV_DEFENSORAS; i++) {
+			for (j = 0; j < NUM_TIROS; j++) {
+				if (jogo->tiros[j].velocidade == 0) {
+					pos_tiros = j;
+					break;
+				}
+			}
+			jogo->tiros[pos_tiros].coord.x = jogo->naves_defensoras[i].coord.x;
+			jogo->tiros[pos_tiros].coord.y = jogo->naves_defensoras[i].coord.y;
+			jogo->tiros[pos_tiros].velocidade = random_l_h(1, 10);
+			jogo->pontuacoes->tiros++;
+		}
+	}
+	//_tprintf(TEXT("%d"), input);
+	_flushall();
 }
 
 void mostra_jogo_consola(Jogo *jogo) {

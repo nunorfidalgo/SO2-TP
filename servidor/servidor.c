@@ -5,11 +5,9 @@
 
 // Variáveis globais (definidas no servidor.h) 
 BOOL	DEBUG = FALSE;
-TCHAR	NomeSemaforoPodeEscrever[] = TEXT("Escrever no semáforo");
-TCHAR	NomeSemaforoPodeLer[] = TEXT("Ler do semáforo");
+HANDLE	MutexJogo;
 HANDLE	SemEscreveJogo;
 HANDLE	SemLerJogo;
-HANDLE	MutexJogo;
 
 int _tmain(int argc, TCHAR *argv[]) {
 	setlocale(LC_CTYPE, "Portuguese");
@@ -36,30 +34,16 @@ int _tmain(int argc, TCHAR *argv[]) {
 		exit(0);
 	}
 
-	jogo = CriaMemoriaPartilhadaJogo(&hMapMemParJogo, &tam_jogo);
-
-	MutexJogo = CreateMutex(NULL, TRUE, "Jogo");
+	MutexJogo = CreateMutex(NULL, FALSE, "MutexJogo");
 	if (MutexJogo == NULL) {
 		_tprintf(TEXT("CreateMutex error: %d\n"), GetLastError());
 		return 1;
 	}
 
-	// verificar se ja existe shm
-	if (GetLastError() != ERROR_ALREADY_EXISTS) {
-		// colocar IN a zero...
-		jogo->In = 0;
-		jogo->Out = 0;
-		// (Mutex ou) restaurar valor do semaforo PodeEscrever(+10)... ou seja release de 10 unidades, alterar na criacao para 0 ate 10
-		/*ReleaseSemaphore(PodeEscrever, 10, NULL);*/
-		ReleaseMutex(MutexJogo);
-	}
+	CriaSemaforoEscreveJogo(SemEscreveJogo);
+	CriaSemaforoLerJogo(SemLerJogo);
 
-	SemEscreveJogo = CreateSemaphore(NULL, SEMAFORO_JOGO_NUM_ACCOES, SEMAFORO_JOGO_NUM_ACCOES, NomeSemaforoPodeEscrever);
-	SemLerJogo = CreateSemaphore(NULL, 0, SEMAFORO_JOGO_NUM_ACCOES, NomeSemaforoPodeLer);
-	if (SemEscreveJogo == NULL || SemLerJogo == NULL) {
-		_tprintf(TEXT("[Erro]Criação de objectos do Windows(%d)\n"), GetLastError());
-		return -1;
-	}
+	jogo = CriaMemoriaPartilhadaJogo(&hMapMemParJogo, &tam_jogo);
 
 	if (argc > 1 && _tcscmp(argv[1], TEXT("debug")) == 0) DEBUG = TRUE;
 	inicia_jogo(jogo);
@@ -113,9 +97,10 @@ int _tmain(int argc, TCHAR *argv[]) {
 	WaitForSingleObject(htBatalha, INFINITE);
 	//WaitForSingleObject(htEfeitos, INFINITE);
 
-	CloseHandle(MutexJogo);
-
 	UnmapViewOfFile(jogo);
+	CloseHandle(SemEscreveJogo);
+	CloseHandle(SemLerJogo);
+	CloseHandle(MutexJogo);
 	CloseHandle(hMapMemParJogo);
 
 	_tprintf(TEXT("\nFim do jogo!!\n\n"));
