@@ -39,7 +39,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 		exit(0);
 	}
 
-	MutexJogo = CreateMutex(NULL, FALSE, "MutexJogo");
+	MutexJogo = CreateMutex(NULL, FALSE, (LPCWSTR) "MutexJogo");
 	if (MutexJogo == NULL) {
 		_tprintf(TEXT("MutexJogo error: %d\n"), GetLastError());
 		exit(1);
