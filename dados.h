@@ -76,8 +76,7 @@ typedef struct {
 // Estrutura de dados
 // Coordenadas das naves no campo de jogo
 typedef struct {
-	unsigned int	x;
-	unsigned int	y;
+	unsigned int	x, y;
 } Posicao; // coordenadas (nao se pode usar Coord, é reservado)
 
 // Dimensao dos elementos do jogo
